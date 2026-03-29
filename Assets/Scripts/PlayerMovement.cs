@@ -35,6 +35,17 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = new Vector3(Move.x, rb.linearVelocity.y, Move.z);
     }
 
+    void OnCollisionEnter(Collision other)
+    {
+        if (other.collider.CompareTag("Wall"))
+        {
+            Debug.Log("Hit a Wall");
+            transform.Rotate(0f,180f,0f);
+            rb.linearVelocity = -rb.linearVelocity *2;
+            MoveSpeed = -MoveSpeed;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
