@@ -5,7 +5,7 @@ public class PlayerMovement : MonoBehaviour
 {
 
     private PlayerControls controls;
-    private Vector2 moveInput;
+    private Vector3 moveInput;
 
     [SerializeField] Transform headTarget;
 
@@ -20,8 +20,8 @@ public class PlayerMovement : MonoBehaviour
     {
         controls = new PlayerControls();
 
-        controls.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
-        controls.Player.Move.canceled += ctx => moveInput = Vector2.zero;
+        controls.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector3>();
+        controls.Player.Move.canceled += ctx => moveInput = Vector3.zero;
     }
 
     void OnEnable()
@@ -36,8 +36,15 @@ public class PlayerMovement : MonoBehaviour
 
     void MovePlayer()
     {
-       Vector3 Move = new Vector3(moveInput.x, 0f, 1f) * MoveSpeed;
-       rb.linearVelocity = new Vector3(Move.x, rb.linearVelocity.y, Move.z);
+       Vector3 Move = new Vector3(0f, 0f, moveInput.z);
+       Vector3 worldMove = transform.TransformDirection(Move) * MoveSpeed;
+       rb.MovePosition(rb.position + worldMove * Time.deltaTime);
+    }
+
+    void RotatePlayer() 
+    {
+        transform.Rotate(0f, moveInput.x, 0f);
+        headTarget.Rotate(0f, moveInput.x, 0f);
     }
 
 
@@ -51,15 +58,15 @@ public class PlayerMovement : MonoBehaviour
 
             if (!IsRotating)
             {
-                StartCoroutine(SmoothRotate(0.35f));
+                StartCoroutine(WallRotate(0.35f));
             }
 
-            rb.linearVelocity = -rb.linearVelocity *2;
-            MoveSpeed = -MoveSpeed;
+            rb.linearVelocity = rb.linearVelocity *2;
+            MoveSpeed = MoveSpeed;
         }
     }
 
-    IEnumerator SmoothRotate(float duration)
+    IEnumerator WallRotate(float duration)
     {
         IsRotating = true;
 
@@ -82,5 +89,6 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         MovePlayer();
+        RotatePlayer();
     }
 }
