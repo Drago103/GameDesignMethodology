@@ -7,11 +7,17 @@ public class PlayerMovement : MonoBehaviour
     private PlayerControls controls;
     private Vector3 moveInput;
 
+    //Camera obj
     [SerializeField] Transform headTarget;
 
+    //change-able variable setup
     [SerializeField] float MoveSpeed = 5;
+    [SerializeField] float JumpForce = 5;
+
+    bool isGrounded;
 
     [SerializeField] Rigidbody rb;
+
 
     private bool IsRotating = false;
 
@@ -47,6 +53,14 @@ public class PlayerMovement : MonoBehaviour
         headTarget.Rotate(0f, moveInput.x, 0f);
     }
 
+    void Jumping()
+    {
+       if(isGrounded && controls.Player.Jump.triggered)
+        {
+            rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+        }
+    }
+
 
     void OnCollisionEnter(Collision other)
     {
@@ -63,6 +77,21 @@ public class PlayerMovement : MonoBehaviour
 
             rb.linearVelocity = rb.linearVelocity *2;
             MoveSpeed = MoveSpeed;
+            return;
+        }
+
+        if (other.collider.CompareTag("Ground"))
+        {
+            isGrounded = true;
+            return;
+        }
+    }
+
+    void OnCollisionExit(Collision other)
+    {
+        if (other.collider.CompareTag("Ground"))
+        {
+            isGrounded = false;
         }
     }
 
@@ -90,5 +119,6 @@ public class PlayerMovement : MonoBehaviour
     {
         MovePlayer();
         RotatePlayer();
+        Jumping();
     }
 }

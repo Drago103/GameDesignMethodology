@@ -303,7 +303,7 @@ GameObject:
   - component: {fileID: 407565650}
   m_Layer: 0
   m_Name: Ground
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -846,6 +846,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   headTarget: {fileID: 1675731280}
   MoveSpeed: 5
+  JumpForce: 5
   rb: {fileID: 1603020797}
 --- !u!1 &1675731277
 GameObject:
