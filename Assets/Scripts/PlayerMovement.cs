@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     //change-able variable setup
     [SerializeField] float MoveSpeed = 5;
     [SerializeField] float JumpForce = 5;
+    [SerializeField] float reboundForce = 10f;
 
     bool isGrounded;
 
@@ -25,6 +26,10 @@ public class PlayerMovement : MonoBehaviour
     void Awake()
     {
         controls = new PlayerControls();
+
+        rb.constraints = RigidbodyConstraints.FreezeRotationX |
+        RigidbodyConstraints.FreezeRotationZ;
+
 
         controls.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector3>();
         controls.Player.Move.canceled += ctx => moveInput = Vector3.zero;
@@ -50,7 +55,7 @@ public class PlayerMovement : MonoBehaviour
     void RotatePlayer() 
     {
         transform.Rotate(0f, moveInput.x, 0f);
-        headTarget.Rotate(0f, moveInput.x, 0f);
+        headTarget.rotation = transform.rotation;
     }
             
     void Jumping()
@@ -58,8 +63,6 @@ public class PlayerMovement : MonoBehaviour
        if(isGrounded && controls.Player.Jump.triggered)
         {
             rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
-            rb.freezeRotation = false;
-            rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         }
     }
 
@@ -74,19 +77,25 @@ public class PlayerMovement : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
-        if (other.collider.CompareTag("Wall"))
+        if (other.collider.CompareTag("ReboundWall") && !isGrounded)
         {
             Debug.Log("Hit a Wall");
 
-            transform.Rotate(0f,180f,0f);
+          
+            transform.Rotate(0f, 180f, 0f);
 
+           
             if (!IsRotating)
-            {
                 StartCoroutine(WallRotate(0.35f));
-            }
 
-            rb.linearVelocity = -rb.linearVelocity *2;
-            MoveSpeed = MoveSpeed;
+            Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
+            localVel.z = -localVel.z; // reverse forward/backward
+            rb.linearVelocity = transform.TransformDirection(localVel);
+
+
+            rb.AddForce(Vector3.up * reboundForce, ForceMode.Impulse);
+            Debug.Log(transform.eulerAngles);
+
             return;
         }
 
