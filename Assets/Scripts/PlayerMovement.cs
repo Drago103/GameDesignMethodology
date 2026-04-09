@@ -52,12 +52,22 @@ public class PlayerMovement : MonoBehaviour
         transform.Rotate(0f, moveInput.x, 0f);
         headTarget.Rotate(0f, moveInput.x, 0f);
     }
-
+            
     void Jumping()
     {
        if(isGrounded && controls.Player.Jump.triggered)
         {
             rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+            rb.freezeRotation = false;
+            rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        }
+    }
+
+    void ResetCam()
+    {
+        if (controls.Player.ResetCam.triggered)
+        {
+            headTarget.rotation = transform.rotation;
         }
     }
 
@@ -75,7 +85,7 @@ public class PlayerMovement : MonoBehaviour
                 StartCoroutine(WallRotate(0.35f));
             }
 
-            rb.linearVelocity = rb.linearVelocity *2;
+            rb.linearVelocity = -rb.linearVelocity *2;
             MoveSpeed = MoveSpeed;
             return;
         }
@@ -83,6 +93,8 @@ public class PlayerMovement : MonoBehaviour
         if (other.collider.CompareTag("Ground"))
         {
             isGrounded = true;
+            Vector3 e = transform.eulerAngles;
+            transform.rotation = Quaternion.Euler(0f, e.y, 0f);
             return;
         }
     }
@@ -118,7 +130,11 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         MovePlayer();
-        RotatePlayer();
+        if (!IsRotating && isGrounded)
+        {
+            RotatePlayer();
+        }
         Jumping();
+        ResetCam();
     }
 }
