@@ -5,6 +5,7 @@ public class PlayerMovement : MonoBehaviour
 {
 
     private PlayerControls controls;
+    private float ForwardMovement;
     private Vector3 moveInput;
 
     //Camera obj
@@ -15,6 +16,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float JumpForce = 5;
 
     bool isGrounded;
+    bool InRunZone;
 
     [SerializeField] Rigidbody rb;
 
@@ -25,9 +27,10 @@ public class PlayerMovement : MonoBehaviour
     void Awake()
     {
         controls = new PlayerControls();
-
         controls.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector3>();
         controls.Player.Move.canceled += ctx => moveInput = Vector3.zero;
+
+        ForwardMovement = 1f;
     }
 
     void OnEnable()
@@ -40,11 +43,23 @@ public class PlayerMovement : MonoBehaviour
         controls.Player.Disable();
     }
 
+    void DetermineForwardMovement()
+    {
+        if (!InRunZone)
+        {
+            ForwardMovement = 1f;
+        }
+        else
+        {
+            ForwardMovement = moveInput.z;
+        }     
+    }
+
     void MovePlayer()
     {
-       Vector3 Move = new Vector3(0f, 0f, moveInput.z);
-       Vector3 worldMove = transform.TransformDirection(Move) * MoveSpeed;
-       rb.MovePosition(rb.position + worldMove * Time.deltaTime);
+        Vector3 Move = new Vector3(0f, 0f, ForwardMovement);
+        Vector3 worldMove = transform.TransformDirection(Move) * MoveSpeed;
+        rb.MovePosition(rb.position + worldMove * Time.deltaTime);
     }
 
     void RotatePlayer() 
@@ -97,6 +112,11 @@ public class PlayerMovement : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, e.y, 0f);
             return;
         }
+
+        if (other.collider.CompareTag("Anti-RunZone"))
+        {
+            InRunZone = true;
+        }
     }
 
     void OnCollisionExit(Collision other)
@@ -105,6 +125,12 @@ public class PlayerMovement : MonoBehaviour
         {
             isGrounded = false;
         }
+
+         if (other.collider.CompareTag("Anti-RunZone"))
+        {
+            InRunZone = false;
+        }
+
     }
 
     IEnumerator WallRotate(float duration)
@@ -129,6 +155,7 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        DetermineForwardMovement();
         MovePlayer();
         if (!IsRotating && isGrounded)
         {
