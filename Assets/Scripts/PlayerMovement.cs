@@ -70,7 +70,7 @@ public class PlayerMovement : MonoBehaviour
             
     void Jumping()
     {
-       if(isGrounded && controls.Player.Jump.triggered)
+        if(isGrounded && controls.Player.Jump.triggered)
         {
             rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
             rb.freezeRotation = false;
@@ -125,8 +125,8 @@ public class PlayerMovement : MonoBehaviour
         {
             isGrounded = false;
         }
-
-         if (other.collider.CompareTag("Anti-RunZone"))
+        
+        if (other.collider.CompareTag("Anti-RunZone"))
         {
             InRunZone = false;
         }
