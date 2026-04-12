@@ -6,21 +6,28 @@ public class PlayerMovement : MonoBehaviour
 
     private PlayerControls controls;
     private Vector3 moveInput;
+    private Vector3 normalScale = new Vector3(1f, 1f, 1f);
+    private Vector3 slideScale = new Vector3(1f, 0.3f, 1f);
+
 
     //Camera obj
     [SerializeField] Transform headTarget;
 
     //change-able variable setup
-    [SerializeField] float MoveSpeed = 5;
-    [SerializeField] float JumpForce = 5;
-    [SerializeField] float reboundForce = 10f;
+    [SerializeField] float MoveSpeed;
+    [SerializeField] float JumpForce;
+    [SerializeField] float reboundForce;
+    [SerializeField] float slideVel;
+    [SerializeField] float slideDuration;
 
-    bool isGrounded;
+    private bool isGrounded;
+    private bool CanSlide;
+    private bool IsRotating = false;
+    bool isSliding = false;
+
 
     [SerializeField] Rigidbody rb;
-
-
-    private bool IsRotating = false;
+    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -66,6 +73,20 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void ShowSlidePrompt()
+    {
+        return;
+    }
+
+    void Sliding()
+    {
+       if (CanSlide && isGrounded && !isSliding && controls.Player.Interact.triggered)
+        {
+            StartCoroutine(SlideRoutine());
+        }
+
+    }
+
     void ResetCam()
     {
         if (controls.Player.ResetCam.triggered)
@@ -86,8 +107,11 @@ public class PlayerMovement : MonoBehaviour
 
            
             if (!IsRotating)
+            {
+                Debug.Log("player is rotating");
                 StartCoroutine(WallRotate(0.35f));
-
+            }
+                
             Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
             localVel.z = -localVel.z; // reverse forward/backward
             rb.linearVelocity = transform.TransformDirection(localVel);
@@ -102,6 +126,7 @@ public class PlayerMovement : MonoBehaviour
         if (other.collider.CompareTag("Ground"))
         {
             isGrounded = true;
+            Debug.Log("Player is on the ground");
             Vector3 e = transform.eulerAngles;
             transform.rotation = Quaternion.Euler(0f, e.y, 0f);
             return;
@@ -113,6 +138,27 @@ public class PlayerMovement : MonoBehaviour
         if (other.collider.CompareTag("Ground"))
         {
             isGrounded = false;
+            Debug.Log("Player is off the ground");
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("LowObj"))
+        {
+            ShowSlidePrompt();
+            Debug.Log("can slide, hit e to slide.");
+            CanSlide = true;
+        }
+    }
+
+     void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("LowObj"))
+        {
+            CanSlide = false;
+            transform.localScale = new Vector3(1f, 1f, 1f);
+            Debug.Log("cannot sldie");
         }
     }
 
@@ -135,15 +181,36 @@ public class PlayerMovement : MonoBehaviour
         IsRotating = false;
     }
 
+    IEnumerator SlideRoutine()
+    {
+        isSliding = true;
+
+        // Shrink player
+        transform.localScale = slideScale;
+
+        // Add forward burst
+        rb.linearVelocity += transform.forward * slideVel;
+
+        // Stay in slide for a moment
+        yield return new WaitForSeconds(slideDuration);
+
+        // Return to normal size
+        transform.localScale = normalScale;
+
+        isSliding = false;
+    }
+
+
     // Update is called once per frame
     void Update()
     {
         MovePlayer();
-        if (!IsRotating && isGrounded)
+        if (!IsRotating && isGrounded && !CanSlide)
         {
             RotatePlayer();
         }
         Jumping();
+        Sliding();
         ResetCam();
     }
 }
