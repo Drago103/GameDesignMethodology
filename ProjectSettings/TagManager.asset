@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Wall
   - Ground
+  - ReboundWall
+  - LowObj
+  - Anti-RunZone
   layers:
   - Default
   - TransparentFX
