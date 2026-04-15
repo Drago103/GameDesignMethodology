@@ -4,14 +4,17 @@ using System.Collections;
 public class PlayerMovement : MonoBehaviour
 {
 
+    public QuickTimeEvent quickTimeEvent;
+
     private PlayerControls controls;
     private Vector3 moveInput;
     private Vector3 normalScale = new Vector3(1f, 1f, 1f);
     private Vector3 slideScale = new Vector3(1f, 0.3f, 1f);
-
+    private Coroutine qteRoutine;
 
     //Camera obj
     [SerializeField] Transform headTarget;
+    [SerializeField] GameObject QTEObj;
 
     //change-able variable setup
     [SerializeField] float MoveSpeed;
@@ -23,8 +26,11 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded;
     private bool CanSlide;
     private bool IsRotating = false;
-    bool isSliding = false;
+    private bool isSliding = false;
 
+    private bool IsQTE = false;
+
+    [SerializeField] float maxDuration;
 
     [SerializeField] Rigidbody rb;
     
@@ -40,6 +46,9 @@ public class PlayerMovement : MonoBehaviour
 
         controls.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector3>();
         controls.Player.Move.canceled += ctx => moveInput = Vector3.zero;
+
+        quickTimeEvent.SetMaxDuration(maxDuration);
+        
     }
 
     void OnEnable()
@@ -71,11 +80,6 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
         }
-    }
-
-    void ShowSlidePrompt()
-    {
-        return;
     }
 
     void Sliding()
@@ -146,21 +150,36 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.CompareTag("LowObj"))
         {
-            ShowSlidePrompt();
+            //ShowSlidePrompt();
+            QTEObj.SetActive(true);
+            qteRoutine = StartCoroutine(runQTE(maxDuration));   
             Debug.Log("can slide, hit e to slide.");
             CanSlide = true;
         }
     }
 
-     void OnTriggerExit(Collider other)
+    /* void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("LowObj"))
         {
             CanSlide = false;
-            transform.localScale = new Vector3(1f, 1f, 1f);
-            Debug.Log("cannot sldie");
+            IsQTE = false;
+
+            transform.localScale = normalScale;
+
+            if (qteRoutine != null)
+            {
+                StopCoroutine(qteRoutine);
+                qteRoutine = null;
+            }
+
+            quickTimeEvent.ResetUI();
+            QTEObj.SetActive(false);
+
+            Debug.Log("cannot slide");
         }
-    }
+    } */
+
 
     IEnumerator WallRotate(float duration)
     {
@@ -200,6 +219,39 @@ public class PlayerMovement : MonoBehaviour
         isSliding = false;
     }
 
+   IEnumerator runQTE(float duration)
+    {
+        MoveSpeed *= 0.03f;
+        float timer = 0f;
+        quickTimeEvent.SetDuration(0f);
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            quickTimeEvent.SetDuration(timer);
+
+            if (controls.Player.Interact.triggered)
+            {
+                Debug.Log("QTE success");
+                quickTimeEvent.ResetUI();
+                QTEObj.SetActive(false);
+                IsQTE = false;
+                CanSlide = false;
+                MoveSpeed /= 0.03f;
+                yield break;
+            }
+
+            yield return null;
+        }
+
+        Debug.Log("QTE failed");
+        quickTimeEvent.ResetUI();
+        QTEObj.SetActive(false);
+        IsQTE = false;
+        CanSlide = false;
+        MoveSpeed /= 0.03f;
+
+    }
 
     // Update is called once per frame
     void Update()
