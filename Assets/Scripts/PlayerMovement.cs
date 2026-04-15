@@ -55,6 +55,8 @@ public class PlayerMovement : MonoBehaviour
 
         quickTimeEvent.SetMaxDuration(maxDuration);
         ForwardMovement = 1f;
+
+        //QTEObj = null;
         
     }
 
