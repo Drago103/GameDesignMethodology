@@ -7,6 +7,9 @@ public class PlayerMovement : MonoBehaviour
     public QuickTimeEvent quickTimeEvent;
 
     private PlayerControls controls;
+    private float ForwardMovement;
+
+    private float originalSpeed;
     private Vector3 moveInput;
     private Vector3 normalScale = new Vector3(1f, 1f, 1f);
     private Vector3 slideScale = new Vector3(1f, 0.3f, 1f);
@@ -23,7 +26,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float slideVel;
     [SerializeField] float slideDuration;
 
+    [SerializeField] float slowDownFactor;
+
     private bool isGrounded;
+    private bool InRunZone;
     private bool CanSlide;
     private bool IsRotating = false;
     private bool isSliding = false;
@@ -48,6 +54,7 @@ public class PlayerMovement : MonoBehaviour
         controls.Player.Move.canceled += ctx => moveInput = Vector3.zero;
 
         quickTimeEvent.SetMaxDuration(maxDuration);
+        ForwardMovement = 1f;
         
     }
 
@@ -61,9 +68,21 @@ public class PlayerMovement : MonoBehaviour
         controls.Player.Disable();
     }
 
+    void DetermineForwardMovement()
+    {
+        if (!InRunZone)
+        {
+            ForwardMovement = 1f;
+        }
+        else
+        {
+            ForwardMovement = moveInput.z;
+        }     
+    }
+
     void MovePlayer()
     {
-       Vector3 Move = new Vector3(0f, 0f, moveInput.z);
+       Vector3 Move = new Vector3(0f, 0f,  ForwardMovement);
        Vector3 worldMove = transform.TransformDirection(Move) * MoveSpeed;
        rb.MovePosition(rb.position + worldMove * Time.deltaTime);
     }
@@ -80,15 +99,6 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
         }
-    }
-
-    void Sliding()
-    {
-       if (CanSlide && isGrounded && !isSliding && controls.Player.Interact.triggered)
-        {
-            StartCoroutine(SlideRoutine());
-        }
-
     }
 
     void ResetCam()
@@ -135,6 +145,11 @@ public class PlayerMovement : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, e.y, 0f);
             return;
         }
+
+        if (other.collider.CompareTag("Anti-RunZone"))
+        {
+            InRunZone = true;
+        }
     }
 
     void OnCollisionExit(Collision other)
@@ -144,6 +159,12 @@ public class PlayerMovement : MonoBehaviour
             isGrounded = false;
             Debug.Log("Player is off the ground");
         }
+
+         if (other.collider.CompareTag("Anti-RunZone"))
+        {
+            InRunZone = false;
+        }
+
     }
 
     void OnTriggerEnter(Collider other)
@@ -221,7 +242,8 @@ public class PlayerMovement : MonoBehaviour
 
    IEnumerator runQTE(float duration)
     {
-        MoveSpeed *= 0.03f;
+        originalSpeed = MoveSpeed;
+        MoveSpeed *= slowDownFactor;
         float timer = 0f;
         quickTimeEvent.SetDuration(0f);
 
@@ -233,11 +255,17 @@ public class PlayerMovement : MonoBehaviour
             if (controls.Player.Interact.triggered)
             {
                 Debug.Log("QTE success");
+
                 quickTimeEvent.ResetUI();
                 QTEObj.SetActive(false);
+
                 IsQTE = false;
                 CanSlide = false;
-                MoveSpeed /= 0.03f;
+
+                MoveSpeed = originalSpeed;
+
+                StartCoroutine(SlideRoutine());
+
                 yield break;
             }
 
@@ -249,7 +277,7 @@ public class PlayerMovement : MonoBehaviour
         QTEObj.SetActive(false);
         IsQTE = false;
         CanSlide = false;
-        MoveSpeed /= 0.03f;
+        MoveSpeed = originalSpeed;
 
     }
 
@@ -262,7 +290,6 @@ public class PlayerMovement : MonoBehaviour
             RotatePlayer();
         }
         Jumping();
-        Sliding();
         ResetCam();
     }
 }
