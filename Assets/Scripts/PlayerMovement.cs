@@ -36,6 +36,9 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsQTE = false;
 
+    private float currentYRotation;
+
+
     [SerializeField] float maxDuration;
 
     [SerializeField] Rigidbody rb;
@@ -56,7 +59,9 @@ public class PlayerMovement : MonoBehaviour
         quickTimeEvent.SetMaxDuration(maxDuration);
         ForwardMovement = 1f;
 
-        //QTEObj = null;
+        currentYRotation = transform.eulerAngles.y;
+
+        //  QTEObj = null;
         
     }
 
@@ -89,11 +94,15 @@ public class PlayerMovement : MonoBehaviour
        rb.MovePosition(rb.position + worldMove * Time.deltaTime);
     }
 
-    void RotatePlayer() 
+    void RotatePlayer()
     {
-        transform.Rotate(0f, moveInput.x, 0f);
-        headTarget.rotation = transform.rotation;
+        currentYRotation += moveInput.x; // or multiply by turn speed
+        transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+
+        if (!IsRotating)
+            headTarget.rotation = transform.rotation;
     }
+
             
     void Jumping()
     {
@@ -116,11 +125,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.collider.CompareTag("ReboundWall") && !isGrounded)
         {
-            Debug.Log("Hit a Wall");
-
-          
-            transform.Rotate(0f, 180f, 0f);
-
+            Debug.Log("Hit a Rebound Wall");
            
             if (!IsRotating)
             {
@@ -208,20 +213,24 @@ public class PlayerMovement : MonoBehaviour
     {
         IsRotating = true;
 
-        Quaternion startRot = headTarget.rotation;
-        Quaternion endRot = headTarget.rotation * Quaternion.Euler(0f,180f,0f);
+        float startY = currentYRotation;
+        float endY = currentYRotation + 180f;
 
-        float time = 0f;
+        float t = 0f;
 
-        while (time < 1f)
+        while (t < 1f)
         {
-            time += Time.deltaTime / duration;
-            headTarget.rotation = Quaternion.Slerp(startRot, endRot, time);
+            t += Time.deltaTime / duration;
+            currentYRotation = Mathf.Lerp(startY, endY, t);
+            transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+
+            headTarget.rotation = transform.rotation;
             yield return null;
         }
 
         IsRotating = false;
     }
+
 
     IEnumerator SlideRoutine()
     {
