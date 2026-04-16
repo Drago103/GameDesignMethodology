@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Wall
   - Ground
+  - Gameover
   layers:
   - Default
   - TransparentFX

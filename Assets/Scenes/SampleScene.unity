@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 120257826}
   m_Layer: 0
   m_Name: GameoverBox
-  m_TagString: Untagged
+  m_TagString: Gameover
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -146,7 +146,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 120257825}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5649bfc49c526344f9af5f9959249c82, type: 3}
   m_Name: 
@@ -718,6 +718,7 @@ GameObject:
   - component: {fileID: 1603020798}
   - component: {fileID: 1603020797}
   - component: {fileID: 1603020802}
+  - component: {fileID: 1603020803}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -862,6 +863,19 @@ MonoBehaviour:
   MoveSpeed: 5
   JumpForce: 5
   rb: {fileID: 1603020797}
+--- !u!114 &1603020803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603020796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5649bfc49c526344f9af5f9959249c82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::gameover
+  loadscene: GameoverScene
 --- !u!1 &1675731277
 GameObject:
   m_ObjectHideFlags: 0
