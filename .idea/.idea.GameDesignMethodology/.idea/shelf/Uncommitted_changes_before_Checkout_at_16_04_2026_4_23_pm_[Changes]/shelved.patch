@@ -1,0 +1,22 @@
+Index: Assets/TimeSlowDown.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using System;\r\nusing UnityEngine;\r\nusing UnityEngine.InputSystem;\r\npublic class NewMonoBehaviourScript : MonoBehaviour\r\n{\r\n    private PlayerControls _controls;\r\n\r\n    private bool _isHolding;\r\n    [SerializeField] private float slowFactor = 0.5f;\r\n    [SerializeField] private float changeSpeed = 5f;\r\n    private void Awake()\r\n    {\r\n        _controls = new PlayerControls();\r\n    }\r\n\r\n    // Start is called once before the first execution of Update after the MonoBehaviour is created\r\n    void Start()\r\n    {\r\n        \r\n    }\r\n\r\n    // Update is called once per frame\r\n    void Update()\r\n    {\r\n        TimeSlowDown();\r\n    }\r\n\r\n    private void OnEnable()\r\n    {\r\n        _controls.Player.Enable();\r\n        _controls.Player.SlowDown.started += OnSlowDownStarted;\r\n        _controls.Player.SlowDown.canceled += OnSlowDownCanceled;\r\n    }\r\n\r\n    private void OnDisable()\r\n    {\r\n        _controls.Player.SlowDown.started -= OnSlowDownStarted;\r\n        _controls.Player.SlowDown.canceled -= OnSlowDownCanceled;\r\n        _controls.Player.Disable();\r\n        Time.timeScale = 1f;\r\n        Time.fixedDeltaTime = 0.02f;\r\n    }\r\n\r\n    void OnSlowDownStarted(InputAction.CallbackContext ctx)\r\n    { \r\n        _isHolding = true;\r\n    }\r\n    \r\n    void OnSlowDownCanceled(InputAction.CallbackContext ctx)\r\n    {\r\n        _isHolding = false;\r\n    }\r\n    \r\n    void TimeSlowDown()\r\n    {\r\n        float target = _isHolding ? slowFactor : 1f;\r\n\r\n        Time.timeScale = Mathf.MoveTowards(Time.timeScale, target, changeSpeed * Time.unscaledDeltaTime\r\n        );\r\n\r\n        Time.fixedDeltaTime = 0.02f * Time.timeScale;\r\n    }\r\n}\r\n
+===================================================================
+diff --git a/Assets/TimeSlowDown.cs b/Assets/TimeSlowDown.cs
+--- a/Assets/TimeSlowDown.cs	(revision c88a3bcd21710beabd649e1183f2b78e0406442e)
++++ b/Assets/TimeSlowDown.cs	(date 1776320552915)
+@@ -53,11 +53,10 @@
+     
+     void TimeSlowDown()
+     {
++        print(_isHolding);
+         float target = _isHolding ? slowFactor : 1f;
+ 
+-        Time.timeScale = Mathf.MoveTowards(Time.timeScale, target, changeSpeed * Time.unscaledDeltaTime
+-        );
+-
++        Time.timeScale = Mathf.MoveTowards(Time.timeScale, target, changeSpeed * Time.unscaledDeltaTime);
+         Time.fixedDeltaTime = 0.02f * Time.timeScale;
+     }
+ }

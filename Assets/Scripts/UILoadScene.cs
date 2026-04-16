@@ -7,4 +7,9 @@ public class UILoadScene : MonoBehaviour
     {
         SceneManager.LoadScene(loadscene);
     }
+    
+    public void LoadByIndex(int index)
+    {
+        SceneManager.LoadScene(index);
+    }
 }
