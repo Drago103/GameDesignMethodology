@@ -10,9 +10,15 @@ public class PlayerMovement : MonoBehaviour
     private float ForwardMovement;
 
     private float originalSpeed;
+
+    float wallReattachDelay = 0.2f;
+    float lastWallJumpTime = -10f;
+
     private Vector3 moveInput;
     private Vector3 normalScale = new Vector3(1f, 1f, 1f);
     private Vector3 slideScale = new Vector3(1f, 0.3f, 1f);
+
+    private Vector3 wallNormal;
     private Coroutine qteRoutine;
 
     //Camera obj
@@ -28,16 +34,22 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] float slowDownFactor;
 
+    [SerializeField] float slidingDownWallSpeed;
+
     private bool isGrounded;
     private bool InRunZone;
     private bool CanSlide;
     private bool IsRotating = false;
     private bool isSliding = false;
+    private bool OnWall = false;
+
+    bool wallJumping = false;
 
     private bool IsQTE = false;
 
     private float currentYRotation;
 
+    private Coroutine wallSlideRoutine;
 
     [SerializeField] float maxDuration;
 
@@ -89,6 +101,7 @@ public class PlayerMovement : MonoBehaviour
 
     void MovePlayer()
     {
+       if(OnWall || wallJumping) return;
        Vector3 Move = new Vector3(0f, 0f,  ForwardMovement);
        Vector3 worldMove = transform.TransformDirection(Move) * MoveSpeed;
        rb.MovePosition(rb.position + worldMove * Time.deltaTime);
@@ -120,29 +133,56 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void WallJump()
+    {
+        lastWallJumpTime = Time.time;
+
+        rb.linearVelocity = Vector3.zero;
+
+        Vector3 JumpDir = (wallNormal + Vector3.up).normalized;
+
+        rb.AddForce(JumpDir * JumpForce * 2, ForceMode.Impulse);
+
+        Debug.Log("Player is wall jumping!!!");
+    }
+
+    void handleWallJump()
+    {
+        if(!OnWall || IsRotating || wallJumping) return;
+
+        if(controls.Player.Jump.triggered)
+        {
+            Debug.Log("Perform Wall jump");
+
+            if (wallSlideRoutine != null)
+                StopCoroutine(wallSlideRoutine);
+
+            wallJumping = true;
+            OnWall = false;
+            WallJump();
+            StartCoroutine(UnlockWallJump());
+        }
+    }
+    void ReboundWall()
+    {
+        if (!OnWall)
+        {
+            OnWall = true;
+            //wallJumping  = false;
+             // Rotate camera ONCE when slide starts
+            if (!IsRotating)
+            {
+                StartCoroutine(WallRotate(0.25f));
+            }
+
+            Debug.Log("Player is sliding");
+            wallSlideRoutine = StartCoroutine(WallSliding());
+            //handleWallJump();
+        }
+    }
 
     void OnCollisionEnter(Collision other)
     {
-        if (other.collider.CompareTag("ReboundWall") && !isGrounded)
-        {
-            Debug.Log("Hit a Rebound Wall");
-           
-            if (!IsRotating)
-            {
-                Debug.Log("player is rotating");
-                StartCoroutine(WallRotate(0.35f));
-            }
-                
-            Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
-            localVel.z = -localVel.z; // reverse forward/backward
-            rb.linearVelocity = transform.TransformDirection(localVel);
-
-
-            rb.AddForce(Vector3.up * reboundForce, ForceMode.Impulse);
-            Debug.Log(transform.eulerAngles);
-
-            return;
-        }
 
         if (other.collider.CompareTag("Ground"))
         {
@@ -186,6 +226,24 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void OnCollisionStay(Collision other)
+    {
+         if (other.collider.CompareTag("ReboundWall") && !isGrounded)
+        {
+            if (Time.time < lastWallJumpTime + wallReattachDelay)
+                return; // ignore wall for a moment
+
+            if (!OnWall)
+            {
+                wallNormal = other.GetContact(0).normal;
+                Debug.Log("Hit a Rebound Wall");
+                ReboundWall();  
+            }
+            //wallJumping = false;
+           
+        }
+    }
+
     /* void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("LowObj"))
@@ -208,7 +266,36 @@ public class PlayerMovement : MonoBehaviour
         }
     } */
 
+    IEnumerator UnlockWallJump()
+    {
+        yield return new WaitForSeconds(0.25f);
+        wallJumping = false;
+    }
 
+    IEnumerator WallSliding()
+    {
+        OnWall = true;
+        Debug.Log(OnWall);
+
+        // Reduce downward speed to create a sliding effect
+        while (OnWall && !isGrounded)
+        {
+            Vector3 vel = rb.linearVelocity;
+
+            // Clamp downward velocity
+            if (vel.y < -slidingDownWallSpeed)
+                vel.y = -slidingDownWallSpeed;
+
+            vel.x *=0.1f;
+            vel.z *=0.1f;
+
+            rb.linearVelocity = vel;
+
+            yield return null;
+        }
+
+        OnWall = false;
+    }
     IEnumerator WallRotate(float duration)
     {
         IsRotating = true;
@@ -229,6 +316,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         IsRotating = false;
+        wallJumping = false;
     }
 
 
@@ -302,5 +390,6 @@ public class PlayerMovement : MonoBehaviour
         }
         Jumping();
         ResetCam();
+        handleWallJump();
     }
 }
