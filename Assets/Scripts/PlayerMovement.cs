@@ -139,9 +139,8 @@ public class PlayerMovement : MonoBehaviour
 
         rb.linearVelocity = Vector3.zero;
 
-        Vector3 JumpDir = (wallNormal + Vector3.up).normalized;
-
-        rb.AddForce(JumpDir * JumpForce * 2, ForceMode.Impulse);
+        rb.AddForce(wallNormal.normalized * JumpForce * 2, ForceMode.Impulse);
+        rb.AddForce(Vector3.up * JumpForce * 2, ForceMode.Impulse);
 
         Debug.Log("Player is wall jumping!!!");
     }
