@@ -28,7 +28,7 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
 
     [Header("Player")]
     public Transform player;
-    public Vector3 playerStartPosition = new Vector3(10f, 2f, 102f);
+    public Vector3 playerStartPosition = new Vector3(2f, 0.5f, 105f);
 
     void Start()
     {
