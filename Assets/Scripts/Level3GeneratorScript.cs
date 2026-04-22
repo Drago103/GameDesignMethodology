@@ -1,283 +1,287 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class DesertFPSLevelGenerator : MonoBehaviour
+public class HandcraftedDesertMapGenerator : MonoBehaviour
 {
-    [Header("Ground")]
-    public GameObject groundPrefab; // Floor
-    public int groundSizeX = 300;
-    public int groundSizeZ = 300;
-    public float groundY = 0f;
+    [Header("Floor")]
+    public GameObject sandTilePrefab;
+    public int floorTilesX = 46;
+    public int floorTilesZ = 22;
+    public float tileSize = 10f;
+    public float floorY = 0f;
 
-    [Header("Path Settings")]
-    public float pathWidth = 18f;
-    public int pathControlPoints = 6;
-    public float pathCurveAmount = 35f;
+    [Header("Prefabs")]
+    public GameObject wallPrefab;
+    public GameObject[] treePrefabs;
+    public GameObject[] rockPrefabs;
+    public GameObject[] decorationPrefabs;
 
-    [Header("Rock Prefabs")]
-    public GameObject[] rockPrefabs; // Rocks
-    public int rockCount = 120;
-    public float minRockScale = 1.5f;
-    public float maxRockScale = 6f;
-    public float rockClearDistanceFromPath = 10f;
+    [Header("Wall Shape")]
+    public float wallHeight = 10f;
+    public float wallThickness = 1f;
+    public float wallBaseY = 0f;
 
-    [Header("Hill / Dune Prefabs")]
-    public GameObject[] hillPrefabs; // Hills
-    public int hillCount = 30;
-    public float minHillScale = 8f;
-    public float maxHillScale = 20f;
-    public float hillClearDistanceFromPath = 12f;
+    [Header("Object Heights")]
+    public float treeY = 0f;
+    public float rockY = 0f;
+    public float decorationY = 0f;
 
-    [Header("Decor Prefabs")]
-    public GameObject[] decorPrefabs; // Stonnes and small rocks
-    public int decorCount = 40;
-    public float decorClearDistanceFromPath = 6f;
-
-    [Header("Player / Start / End")]
-    public Transform player; // Player
-    public Transform startMarker;
-    public Transform endMarker;
-
-    [Header("Height Variation")]
-    public float noiseScale = 0.015f;
-    public float duneHeight = 6f;
-
-    private List<Vector3> pathPoints = new List<Vector3>();
+    [Header("Player")]
+    public Transform player;
+    public Vector3 playerStartPosition = new Vector3(10f, 2f, 102f);
 
     void Start()
     {
-        GenerateLevel();
+        GenerateMap();
     }
 
-    public void GenerateLevel()
+    public void GenerateMap()
     {
         ClearChildren();
-
-        GenerateGround();
-        GeneratePath();
-        PlaceHills();
-        PlaceRocks();
-        PlaceDecor();
+        GenerateFloor();
+        GenerateWalls();
+        GenerateTrees();
+        GenerateRocks();
+        GenerateDecorations();
         PositionPlayer();
     }
 
-    void GenerateGround()
+    void GenerateFloor()
     {
-        if (groundPrefab == null) return;
+        if (sandTilePrefab == null) return;
 
-        GameObject ground = Instantiate(
-            groundPrefab,
-            new Vector3(groundSizeX * 0.5f, groundY, groundSizeZ * 0.5f),
-            Quaternion.identity,
-            transform
-        );
-
-        ground.name = "DesertGround";
-        ground.transform.localScale = new Vector3(groundSizeX / 10f, 1f, groundSizeZ / 10f);
-    }
-
-    void GeneratePath()
-    {
-        pathPoints.Clear();
-
-        float segmentLength = groundSizeZ / (float)(pathControlPoints - 1);
-
-        for (int i = 0; i < pathControlPoints; i++)
+        for (int x = 0; x < floorTilesX; x++)
         {
-            float z = i * segmentLength;
-            float x = (groundSizeX * 0.5f);
-
-            if (i != 0 && i != pathControlPoints - 1)
+            for (int z = 0; z < floorTilesZ; z++)
             {
-                x += Random.Range(-pathCurveAmount, pathCurveAmount);
+                Vector3 pos = new Vector3(x * tileSize, floorY, z * tileSize);
+
+                GameObject tile = Instantiate(sandTilePrefab, pos, Quaternion.identity, transform);
+                tile.name = $"SandTile_{x}_{z}";
+                tile.transform.localScale = Vector3.one;
             }
-
-            float y = GetHeightAtPosition(x, z);
-            pathPoints.Add(new Vector3(x, y, z));
         }
-
-        if (startMarker != null)
-            startMarker.position = pathPoints[0] + Vector3.up * 1f;
-
-        if (endMarker != null)
-            endMarker.position = pathPoints[pathPoints.Count - 1] + Vector3.up * 1f;
     }
 
-    void PlaceHills()
+    void GenerateWalls()
+{
+    if (wallPrefab == null) return;
+
+    // ===== START CORRIDOR (two parallel lines) =====
+    CreateWallChain(new Vector3[]
     {
-        if (hillPrefabs == null || hillPrefabs.Length == 0) return;
+        new Vector3(0,0,115),
+        new Vector3(90,0,115)
+    });
 
-        int placed = 0;
-        int attempts = 0;
+    CreateWallChain(new Vector3[]
+    {
+        new Vector3(0,0,90),
+        new Vector3(85,0,90),
+        new Vector3(110,0,75)
+    });
 
-        while (placed < hillCount && attempts < hillCount * 20)
+    // ===== OUTER TOP WALL (zig-zag) =====
+    CreateWallChain(new Vector3[]
+    {
+        new Vector3(90,0,115),
+        new Vector3(135,0,130),
+        new Vector3(175,0,110),
+        new Vector3(220,0,118),
+        new Vector3(265,0,105),
+        new Vector3(310,0,90),
+        new Vector3(300,0,140),
+        new Vector3(470,0,90)
+    });
+
+    // ===== OUTER BOTTOM WALL =====
+    CreateWallChain(new Vector3[]
+    {
+        new Vector3(110,0,75),
+        new Vector3(135,0,10),
+        new Vector3(200,0,0),
+        new Vector3(260,0,15),
+        new Vector3(300,0,30),
+        new Vector3(360,0,10),
+        new Vector3(430,0,25)
+    });
+
+    // ===== INNER TOP CORRIDOR =====
+    CreateWallChain(new Vector3[]
+    {
+        new Vector3(170,0,85),
+        new Vector3(215,0,95),
+        new Vector3(260,0,80),
+        new Vector3(255,0,60)
+    });
+
+    // ===== INNER LOWER CORRIDOR =====
+    CreateWallChain(new Vector3[]
+    {
+        new Vector3(160,0,55),
+        new Vector3(205,0,65),
+        new Vector3(255,0,55),
+        new Vector3(330,0,35)
+    });
+
+    // ===== LEFT DIAGONAL WALL =====
+    CreateWallChain(new Vector3[]
+    {
+        new Vector3(120,0,80),
+        new Vector3(150,0,20),
+        new Vector3(200,0,10)
+    });
+
+    // ===== RIGHT TRIANGLE FUNNEL =====
+    CreateWallChain(new Vector3[]
+    {
+        new Vector3(320,0,80),
+        new Vector3(430,0,50),
+        new Vector3(320,0,35),
+        new Vector3(340,0,55)
+    });
+
+    // ===== RIGHT INNER LINE =====
+    CreateWallChain(new Vector3[]
+    {
+        new Vector3(300,0,50),
+        new Vector3(380,0,50)
+    });
+
+    // ===== FINAL END CORRIDOR =====
+    CreateWallChain(new Vector3[]
+    {
+        new Vector3(430,0,25),
+        new Vector3(480,0,40)
+    });
+
+    CreateWallChain(new Vector3[]
+    {
+        new Vector3(470,0,90),
+        new Vector3(480,0,60)
+    });
+}
+
+    void GenerateTrees()
+    {
+        if (treePrefabs == null || treePrefabs.Length == 0) return;
+
+        Vector3[] treePositions = new Vector3[]
         {
-            attempts++;
+            new Vector3(115, treeY, 106),
+            new Vector3(135, treeY, 92),
+            new Vector3(138, treeY, 88),
+            new Vector3(162, treeY, 62),
+            new Vector3(272, treeY, 48),
+            new Vector3(306, treeY, 100),
+            new Vector3(300, treeY, 10),
+            new Vector3(382, treeY, 76),
+            new Vector3(402, treeY, 18),
+            new Vector3(360, treeY, -2),
+            new Vector3(208, treeY, 0),
+            new Vector3(160, treeY, -10)
+        };
 
-            float x = Random.Range(0f, groundSizeX);
-            float z = Random.Range(0f, groundSizeZ);
-            Vector3 pos = new Vector3(x, GetHeightAtPosition(x, z), z);
-
-            if (DistanceToPath(pos) < hillClearDistanceFromPath)
-                continue;
-
-            GameObject prefab = hillPrefabs[Random.Range(0, hillPrefabs.Length)];
-            GameObject hill = Instantiate(prefab, pos, Quaternion.Euler(0, Random.Range(0, 360), 0), transform);
-
-            float scale = Random.Range(minHillScale, maxHillScale);
-            hill.transform.localScale = new Vector3(scale, scale, scale);
-
-            placed++;
+        for (int i = 0; i < treePositions.Length; i++)
+        {
+            GameObject prefab = treePrefabs[i % treePrefabs.Length];
+            GameObject obj = Instantiate(prefab, treePositions[i], Quaternion.Euler(0f, i * 23f, 0f), transform);
+            obj.transform.localScale = Vector3.one * 1.3f;
         }
     }
 
-    void PlaceRocks()
+    void GenerateRocks()
     {
         if (rockPrefabs == null || rockPrefabs.Length == 0) return;
 
-        int placed = 0;
-        int attempts = 0;
-
-        while (placed < rockCount && attempts < rockCount * 20)
+        Vector3[] rockPositions = new Vector3[]
         {
-            attempts++;
+            new Vector3(152, rockY, 90),
+            new Vector3(228, rockY, 38),
+            new Vector3(185, rockY, -8),
+            new Vector3(318, rockY, 42)
+        };
 
-            float x = Random.Range(0f, groundSizeX);
-            float z = Random.Range(0f, groundSizeZ);
-            Vector3 pos = new Vector3(x, GetHeightAtPosition(x, z), z);
-
-            if (DistanceToPath(pos) < rockClearDistanceFromPath)
-                continue;
-
-            GameObject prefab = rockPrefabs[Random.Range(0, rockPrefabs.Length)];
-            GameObject rock = Instantiate(prefab, pos, Quaternion.Euler(0, Random.Range(0, 360), 0), transform);
-
-            float scale = Random.Range(minRockScale, maxRockScale);
-            rock.transform.localScale = new Vector3(scale, scale, scale);
-
-            placed++;
+        for (int i = 0; i < rockPositions.Length; i++)
+        {
+            GameObject prefab = rockPrefabs[i % rockPrefabs.Length];
+            GameObject obj = Instantiate(prefab, rockPositions[i], Quaternion.Euler(0f, i * 31f, 0f), transform);
+            obj.transform.localScale = Vector3.one * 1.6f;
         }
     }
 
-    void PlaceDecor()
+    void GenerateDecorations()
     {
-        if (decorPrefabs == null || decorPrefabs.Length == 0) return;
+        if (decorationPrefabs == null || decorationPrefabs.Length == 0) return;
 
-        int placed = 0;
-        int attempts = 0;
-
-        while (placed < decorCount && attempts < decorCount * 20)
+        Vector3[] decorationPositions = new Vector3[]
         {
-            attempts++;
+            new Vector3(110, decorationY, 117),
+            new Vector3(210, decorationY, 56),
+            new Vector3(300, decorationY, 58),
+            new Vector3(425, decorationY, 20)
+        };
 
-            float x = Random.Range(0f, groundSizeX);
-            float z = Random.Range(0f, groundSizeZ);
-            Vector3 pos = new Vector3(x, GetHeightAtPosition(x, z), z);
-
-            if (DistanceToPath(pos) < decorClearDistanceFromPath)
-                continue;
-
-            GameObject prefab = decorPrefabs[Random.Range(0, decorPrefabs.Length)];
-            GameObject obj = Instantiate(prefab, pos, Quaternion.Euler(0, Random.Range(0, 360), 0), transform);
-
-            float scale = Random.Range(0.8f, 2.2f);
-            obj.transform.localScale = new Vector3(scale, scale, scale);
-
-            placed++;
+        for (int i = 0; i < decorationPositions.Length; i++)
+        {
+            GameObject prefab = decorationPrefabs[i % decorationPrefabs.Length];
+            Instantiate(prefab, decorationPositions[i], Quaternion.Euler(0f, i * 18f, 0f), transform);
         }
+    }
+
+    void CreateWallChain(Vector3[] points)
+    {
+        for (int i = 0; i < points.Length - 1; i++)
+        {
+            CreateWallSegment(points[i], points[i + 1]);
+        }
+    }
+
+    void CreateWallSegment(Vector3 start, Vector3 end)
+    {
+        Vector3 flatDir = end - start;
+        flatDir.y = 0f;
+
+        float length = flatDir.magnitude;
+        if (length < 0.01f) return;
+
+        Vector3 midpoint = (start + end) * 0.5f;
+        midpoint.y = wallBaseY + wallHeight * 0.5f;
+
+        float angleY = Mathf.Atan2(flatDir.x, flatDir.z) * Mathf.Rad2Deg;
+        Quaternion rotation = Quaternion.Euler(0f, angleY, 0f);
+
+        GameObject wall = Instantiate(wallPrefab, midpoint, rotation, transform);
+
+        wall.transform.position = midpoint;
+        wall.transform.rotation = rotation;
+        wall.transform.localScale = new Vector3(wallThickness, wallHeight, length);
     }
 
     void PositionPlayer()
     {
-        if (player == null || pathPoints.Count == 0) return;
+        if (player == null) return;
 
-        Vector3 startPos = pathPoints[0];
-        player.position = startPos + Vector3.up * 2f;
-
-        if (pathPoints.Count > 1)
-        {
-            Vector3 dir = (pathPoints[1] - pathPoints[0]).normalized;
-            dir.y = 0f;
-            if (dir != Vector3.zero)
-                player.rotation = Quaternion.LookRotation(dir);
-        }
-    }
-
-    float GetHeightAtPosition(float x, float z)
-    {
-        float noise = Mathf.PerlinNoise(x * noiseScale, z * noiseScale);
-        return groundY + noise * duneHeight;
-    }
-
-    float DistanceToPath(Vector3 point)
-    {
-        if (pathPoints.Count < 2) return float.MaxValue;
-
-        float minDist = float.MaxValue;
-
-        for (int i = 0; i < pathPoints.Count - 1; i++)
-        {
-            Vector3 a = pathPoints[i];
-            Vector3 b = pathPoints[i + 1];
-
-            Vector3 closest = ClosestPointOnLineSegment(a, b, point);
-            float dist = Vector3.Distance(new Vector3(point.x, 0, point.z), new Vector3(closest.x, 0, closest.z));
-
-            if (dist < minDist)
-                minDist = dist;
-        }
-
-        return minDist;
-    }
-
-    Vector3 ClosestPointOnLineSegment(Vector3 a, Vector3 b, Vector3 p)
-    {
-        Vector3 ap = p - a;
-        Vector3 ab = b - a;
-
-        float magnitudeAB = ab.sqrMagnitude;
-        float abapProduct = Vector3.Dot(ap, ab);
-        float distance = abapProduct / magnitudeAB;
-
-        if (distance < 0) return a;
-        if (distance > 1) return b;
-
-        return a + ab * distance;
+        player.position = playerStartPosition;
+        player.rotation = Quaternion.identity;
     }
 
     void ClearChildren()
     {
-        List<GameObject> toDelete = new List<GameObject>();
+        List<GameObject> children = new List<GameObject>();
 
         foreach (Transform child in transform)
         {
-            toDelete.Add(child.gameObject);
+            children.Add(child.gameObject);
         }
 
-        for (int i = 0; i < toDelete.Count; i++)
+        for (int i = 0; i < children.Count; i++)
         {
 #if UNITY_EDITOR
-            DestroyImmediate(toDelete[i]);
+            DestroyImmediate(children[i]);
 #else
-            Destroy(toDelete[i]);
+            Destroy(children[i]);
 #endif
-        }
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        if (pathPoints == null || pathPoints.Count < 2) return;
-
-        Gizmos.color = Color.yellow;
-        for (int i = 0; i < pathPoints.Count - 1; i++)
-        {
-            Gizmos.DrawLine(pathPoints[i], pathPoints[i + 1]);
-        }
-
-        Gizmos.color = Color.cyan;
-        foreach (var p in pathPoints)
-        {
-            Gizmos.DrawSphere(p, 1.2f);
         }
     }
 }
