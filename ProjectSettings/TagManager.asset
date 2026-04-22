@@ -9,6 +9,7 @@ TagManager:
   - ReboundWall
   - LowObj
   - Anti-RunZone
+  - Roof
   layers:
   - Default
   - TransparentFX
