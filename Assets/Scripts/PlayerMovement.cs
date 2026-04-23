@@ -22,11 +22,21 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float MoveSpeed;
     [SerializeField] float JumpForce;
     [SerializeField] float reboundForce;
+    [SerializeField] float mouseSensitivity = 2f;
+
+    [Header("Jump Settings")]
+    [SerializeField] int maxJumps = 2;
+
+    [Header("Slide Settings")]
     [SerializeField] float slideVel;
     [SerializeField] float slideDuration;
     [SerializeField] float slowDownFactor;
-    [SerializeField] float mouseSensitivity = 2f;
     [SerializeField] float slideCooldown = 2f;
+
+    [Header("Dash Settings")]
+    [SerializeField] float dashVelocity = 20f;
+    [SerializeField] float dashDuration = 0.2f;
+    [SerializeField] float dashCooldown = 1f;
 
     [SerializeField] float maxDuration;
 
@@ -36,9 +46,13 @@ public class PlayerMovement : MonoBehaviour
     private bool InRunZone;
     private bool IsRotating = false;
     private bool isSliding = false;
+    private bool isDashing = false;
+
+    private int jumpCount = 0;
 
     private float currentYRotation;
     private float lastSlideTime = -Mathf.Infinity;
+    private float lastDashTime = -Mathf.Infinity;
 
     void Awake()
     {
@@ -85,6 +99,8 @@ public class PlayerMovement : MonoBehaviour
 
     void MovePlayer()
     {
+        if (isDashing) return;
+
         Vector3 Move = new Vector3(0f, 0f, ForwardMovement);
         Vector3 worldMove = transform.TransformDirection(Move) * MoveSpeed;
         rb.MovePosition(rb.position + worldMove * Time.deltaTime);
@@ -101,9 +117,16 @@ public class PlayerMovement : MonoBehaviour
 
     void Jumping()
     {
-        if (isGrounded && controls.Player.Jump.triggered)
+        if (isGrounded)
         {
+            jumpCount = 0;
+        }
+
+        if (jumpCount < maxJumps && controls.Player.Jump.triggered)
+        {
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
             rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+            jumpCount++;
         }
     }
 
@@ -117,10 +140,19 @@ public class PlayerMovement : MonoBehaviour
 
     void CheckSlideInput()
     {
-        if (controls.Player.Interact.triggered && !isSliding && Time.time >= lastSlideTime + slideCooldown)
+        if (controls.Player.Interact.triggered && !isSliding && !isDashing && isGrounded && Time.time >= lastSlideTime + slideCooldown)
         {
             lastSlideTime = Time.time;
             StartCoroutine(SlideRoutine());
+        }
+    }
+
+    void CheckDashInput()
+    {
+        if (controls.Player.Dash.triggered && !isDashing && !isSliding && Time.time >= lastDashTime + dashCooldown)
+        {
+            lastDashTime = Time.time;
+            StartCoroutine(DashRoutine());
         }
     }
 
@@ -136,9 +168,8 @@ public class PlayerMovement : MonoBehaviour
                 StartCoroutine(WallRotate(0.35f));
             }
 
-            Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
-            localVel.z = -localVel.z;
-            rb.linearVelocity = transform.TransformDirection(localVel);
+            float speed = rb.linearVelocity.magnitude;
+            rb.linearVelocity = transform.forward * -speed;
 
             rb.AddForce(Vector3.up * reboundForce, ForceMode.Impulse);
             Debug.Log(transform.eulerAngles);
@@ -149,6 +180,7 @@ public class PlayerMovement : MonoBehaviour
         if (other.collider.CompareTag("Ground"))
         {
             isGrounded = true;
+            jumpCount = 0;
             Debug.Log("Player is on the ground");
             Vector3 e = transform.eulerAngles;
             transform.rotation = Quaternion.Euler(0f, e.y, 0f);
@@ -179,6 +211,7 @@ public class PlayerMovement : MonoBehaviour
     {
         IsRotating = true;
 
+        float speed = rb.linearVelocity.magnitude;
         float startY = currentYRotation;
         float endY = currentYRotation + 180f;
         float t = 0f;
@@ -192,6 +225,7 @@ public class PlayerMovement : MonoBehaviour
             yield return null;
         }
 
+        rb.linearVelocity = transform.forward * MoveSpeed;
         IsRotating = false;
     }
 
@@ -208,6 +242,20 @@ public class PlayerMovement : MonoBehaviour
         isSliding = false;
     }
 
+    IEnumerator DashRoutine()
+    {
+        isDashing = true;
+
+        Vector3 dashDirection = transform.forward;
+        rb.linearVelocity = new Vector3(dashDirection.x * dashVelocity, rb.linearVelocity.y, dashDirection.z * dashVelocity);
+
+        yield return new WaitForSeconds(dashDuration);
+
+        rb.linearVelocity = new Vector3(dashDirection.x * MoveSpeed, rb.linearVelocity.y, dashDirection.z * MoveSpeed);
+
+        isDashing = false;
+    }
+
     void Update()
     {
         DetermineForwardMovement();
@@ -219,5 +267,6 @@ public class PlayerMovement : MonoBehaviour
         Jumping();
         ResetCam();
         CheckSlideInput();
+        CheckDashInput();
     }
 }
