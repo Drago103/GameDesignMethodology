@@ -11,13 +11,12 @@ public class PlayerMovement : MonoBehaviour
 
     private float originalSpeed;
     private Vector3 moveInput;
+    private Vector2 mouseLook;
     private Vector3 normalScale = new Vector3(1f, 1f, 1f);
     private Vector3 slideScale = new Vector3(1f, 0.3f, 1f);
-    private Coroutine qteRoutine;
 
     //Camera obj
     [SerializeField] Transform headTarget;
-    [SerializeField] GameObject QTEObj;
 
     //change-able variable setup
     [SerializeField] float MoveSpeed;
@@ -25,26 +24,22 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float reboundForce;
     [SerializeField] float slideVel;
     [SerializeField] float slideDuration;
-
     [SerializeField] float slowDownFactor;
-
-    private bool isGrounded;
-    private bool InRunZone;
-    private bool CanSlide;
-    private bool IsRotating = false;
-    private bool isSliding = false;
-
-    private bool IsQTE = false;
-
-    private float currentYRotation;
-
+    [SerializeField] float mouseSensitivity = 2f;
+    [SerializeField] float slideCooldown = 2f;
 
     [SerializeField] float maxDuration;
 
     [SerializeField] Rigidbody rb;
-    
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private bool isGrounded;
+    private bool InRunZone;
+    private bool IsRotating = false;
+    private bool isSliding = false;
+
+    private float currentYRotation;
+    private float lastSlideTime = -Mathf.Infinity;
+
     void Awake()
     {
         controls = new PlayerControls();
@@ -52,17 +47,18 @@ public class PlayerMovement : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeRotationX |
         RigidbodyConstraints.FreezeRotationZ;
 
-
         controls.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector3>();
         controls.Player.Move.canceled += ctx => moveInput = Vector3.zero;
 
-        quickTimeEvent.SetMaxDuration(maxDuration);
+        controls.Player.Look.performed += ctx => mouseLook = ctx.ReadValue<Vector2>();
+        controls.Player.Look.canceled += ctx => mouseLook = Vector2.zero;
+
         ForwardMovement = 1f;
 
         currentYRotation = transform.eulerAngles.y;
 
-        //  QTEObj = null;
-        
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     void OnEnable()
@@ -84,29 +80,28 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             ForwardMovement = moveInput.z;
-        }     
+        }
     }
 
     void MovePlayer()
     {
-       Vector3 Move = new Vector3(0f, 0f,  ForwardMovement);
-       Vector3 worldMove = transform.TransformDirection(Move) * MoveSpeed;
-       rb.MovePosition(rb.position + worldMove * Time.deltaTime);
+        Vector3 Move = new Vector3(0f, 0f, ForwardMovement);
+        Vector3 worldMove = transform.TransformDirection(Move) * MoveSpeed;
+        rb.MovePosition(rb.position + worldMove * Time.deltaTime);
     }
 
     void RotatePlayer()
     {
-        currentYRotation += moveInput.x; // or multiply by turn speed
+        currentYRotation += mouseLook.x * mouseSensitivity;
         transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
 
         if (!IsRotating)
             headTarget.rotation = transform.rotation;
     }
 
-            
     void Jumping()
     {
-       if(isGrounded && controls.Player.Jump.triggered)
+        if (isGrounded && controls.Player.Jump.triggered)
         {
             rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
         }
@@ -120,23 +115,30 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void CheckSlideInput()
+    {
+        if (controls.Player.Interact.triggered && !isSliding && Time.time >= lastSlideTime + slideCooldown)
+        {
+            lastSlideTime = Time.time;
+            StartCoroutine(SlideRoutine());
+        }
+    }
 
     void OnCollisionEnter(Collision other)
     {
         if (other.collider.CompareTag("ReboundWall") && !isGrounded)
         {
             Debug.Log("Hit a Rebound Wall");
-           
+
             if (!IsRotating)
             {
                 Debug.Log("player is rotating");
                 StartCoroutine(WallRotate(0.35f));
             }
-                
-            Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
-            localVel.z = -localVel.z; // reverse forward/backward
-            rb.linearVelocity = transform.TransformDirection(localVel);
 
+            Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
+            localVel.z = -localVel.z;
+            rb.linearVelocity = transform.TransformDirection(localVel);
 
             rb.AddForce(Vector3.up * reboundForce, ForceMode.Impulse);
             Debug.Log(transform.eulerAngles);
@@ -167,47 +169,11 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("Player is off the ground");
         }
 
-         if (other.collider.CompareTag("Anti-RunZone"))
+        if (other.collider.CompareTag("Anti-RunZone"))
         {
             InRunZone = false;
         }
-
     }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("LowObj"))
-        {
-            //ShowSlidePrompt();
-            QTEObj.SetActive(true);
-            qteRoutine = StartCoroutine(runQTE(maxDuration));   
-            Debug.Log("can slide, hit e to slide.");
-            CanSlide = true;
-        }
-    }
-
-    /* void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("LowObj"))
-        {
-            CanSlide = false;
-            IsQTE = false;
-
-            transform.localScale = normalScale;
-
-            if (qteRoutine != null)
-            {
-                StopCoroutine(qteRoutine);
-                qteRoutine = null;
-            }
-
-            quickTimeEvent.ResetUI();
-            QTEObj.SetActive(false);
-
-            Debug.Log("cannot slide");
-        }
-    } */
-
 
     IEnumerator WallRotate(float duration)
     {
@@ -215,7 +181,6 @@ public class PlayerMovement : MonoBehaviour
 
         float startY = currentYRotation;
         float endY = currentYRotation + 180f;
-
         float t = 0f;
 
         while (t < 1f)
@@ -223,7 +188,6 @@ public class PlayerMovement : MonoBehaviour
             t += Time.deltaTime / duration;
             currentYRotation = Mathf.Lerp(startY, endY, t);
             transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
-
             headTarget.rotation = transform.rotation;
             yield return null;
         }
@@ -231,76 +195,29 @@ public class PlayerMovement : MonoBehaviour
         IsRotating = false;
     }
 
-
     IEnumerator SlideRoutine()
     {
         isSliding = true;
 
-        // Shrink player
         transform.localScale = slideScale;
-
-        // Add forward burst
         rb.linearVelocity += transform.forward * slideVel;
 
-        // Stay in slide for a moment
         yield return new WaitForSeconds(slideDuration);
 
-        // Return to normal size
         transform.localScale = normalScale;
-
         isSliding = false;
     }
 
-   IEnumerator runQTE(float duration)
-    {
-        originalSpeed = MoveSpeed;
-        MoveSpeed *= slowDownFactor;
-        float timer = 0f;
-        quickTimeEvent.SetDuration(0f);
-
-        while (timer < duration)
-        {
-            timer += Time.deltaTime;
-            quickTimeEvent.SetDuration(timer);
-
-            if (controls.Player.Interact.triggered)
-            {
-                Debug.Log("QTE success");
-
-                quickTimeEvent.ResetUI();
-                QTEObj.SetActive(false);
-
-                IsQTE = false;
-                CanSlide = false;
-
-                MoveSpeed = originalSpeed;
-
-                StartCoroutine(SlideRoutine());
-
-                yield break;
-            }
-
-            yield return null;
-        }
-
-        Debug.Log("QTE failed");
-        quickTimeEvent.ResetUI();
-        QTEObj.SetActive(false);
-        IsQTE = false;
-        CanSlide = false;
-        MoveSpeed = originalSpeed;
-
-    }
-
-    // Update is called once per frame
     void Update()
     {
+        DetermineForwardMovement();
         MovePlayer();
-        if (!IsRotating && isGrounded && !CanSlide)
+        if (!IsRotating)
         {
             RotatePlayer();
         }
         Jumping();
         ResetCam();
+        CheckSlideInput();
     }
 }
