@@ -35,7 +35,8 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
 
     [Header("Player")]
     public Transform player;
-    public Vector3 playerStartPosition = new Vector3(2f, 0.5f, 105f);
+    public Vector3 playerStartPosition = new Vector3(4f, 5f, 253f);
+    public Vector3 playerStartRotation = new Vector3(0f, 99f, 0f);
 
     void Start()
     {
@@ -193,18 +194,49 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
 
         Vector3[] treePositions = new Vector3[]
         {
-            new Vector3(115, treeY, 106),
-            new Vector3(135, treeY, 92),
-            new Vector3(138, treeY, 88),
-            new Vector3(162, treeY, 62),
-            new Vector3(272, treeY, 48),
-            new Vector3(306, treeY, 100),
-            new Vector3(300, treeY, 10),
-            new Vector3(382, treeY, 76),
-            new Vector3(402, treeY, 18),
-            new Vector3(360, treeY, -2),
-            new Vector3(208, treeY, 0),
-            new Vector3(160, treeY, -10)
+            // START AREA
+            new Vector3(110, treeY, 108),
+            new Vector3(120, treeY, 98),
+            new Vector3(130, treeY, 92),
+
+            // LEFT MID
+            new Vector3(150, treeY, 78),
+            new Vector3(165, treeY, 70),
+            new Vector3(180, treeY, 62),
+
+            // INNER CORRIDOR TOP
+            new Vector3(200, treeY, 85),
+            new Vector3(215, treeY, 80),
+            new Vector3(230, treeY, 76),
+
+            // INNER CORRIDOR LOWER
+            new Vector3(210, treeY, 55),
+            new Vector3(230, treeY, 52),
+            new Vector3(250, treeY, 48),
+
+            // CENTRAL OPEN AREA
+            new Vector3(260, treeY, 60),
+            new Vector3(275, treeY, 55),
+            new Vector3(290, treeY, 50),
+
+            // RIGHT MID
+            new Vector3(305, treeY, 65),
+            new Vector3(320, treeY, 60),
+            new Vector3(335, treeY, 55),
+
+            // FUNNEL LEFT SIDE
+            new Vector3(350, treeY, 65),
+            new Vector3(360, treeY, 55),
+            
+            // FUNNEL RIGHT SIDE
+            new Vector3(375, treeY, 50),
+            new Vector3(390, treeY, 45),
+            new Vector3(405, treeY, 42),
+
+            // END AREA
+            new Vector3(420, treeY, 50),
+            new Vector3(435, treeY, 45),
+            new Vector3(450, treeY, 40)
         };
 
         for (int i = 0; i < treePositions.Length; i++)
@@ -220,7 +252,8 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
                 transform
             );
 
-            obj.transform.localScale = Vector3.one * 1.3f;
+            float scale = Random.Range(1.5f, 2.2f) * levelScale;
+            obj.transform.localScale = Vector3.one * scale;
         }
     }
 
@@ -228,28 +261,34 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
     {
         if (rockPrefabs == null || rockPrefabs.Length == 0) return;
 
-        Vector3[] rockPositions = new Vector3[]
-        {
-            new Vector3(152, rockY, 90),
-            new Vector3(228, rockY, 38),
-            new Vector3(185, rockY, -8),
-            new Vector3(318, rockY, 42)
-        };
+        int rockCount = 240; //density
 
-        for (int i = 0; i < rockPositions.Length; i++)
+        float minX = 5f;
+        float maxX = 460f;
+
+        float minZ = 20f;
+        float maxZ = 120f;
+
+        for (int i = 0; i < rockCount; i++)
         {
-            GameObject prefab = rockPrefabs[i % rockPrefabs.Length];
-            Vector3 pos = rockPositions[i] * levelScale;
+            float x = Random.Range(minX, maxX);
+            float z = Random.Range(minZ, maxZ);
+
+            Vector3 pos = new Vector3(x, rockY, z) * levelScale;
             pos.y = rockY;
 
-            GameObject obj = Instantiate(
+            GameObject prefab = rockPrefabs[Random.Range(0, rockPrefabs.Length)];
+
+            GameObject rock = Instantiate(
                 prefab,
                 pos,
-                Quaternion.Euler(0f, i * 31f, 0f),
+                Quaternion.Euler(0f, Random.Range(0f, 360f), 0f),
                 transform
             );
 
-            obj.transform.localScale = Vector3.one * 1.6f;
+            // random natural scale
+            float scale = Random.Range(0.8f, 2.2f) * levelScale * 0.6f;
+            rock.transform.localScale = Vector3.one * scale;
         }
     }
 
@@ -259,10 +298,32 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
 
         Vector3[] decorationPositions = new Vector3[]
         {
-            new Vector3(110, decorationY, 117),
-            new Vector3(210, decorationY, 56),
-            new Vector3(300, decorationY, 58),
-            new Vector3(425, decorationY, 20)
+            // START
+            new Vector3(115, decorationY, 112),
+
+            // LEFT SECTION
+            new Vector3(150, decorationY, 85),
+            new Vector3(170, decorationY, 75),
+
+            // INNER
+            new Vector3(200, decorationY, 70),
+            new Vector3(225, decorationY, 60),
+
+            // CENTER
+            new Vector3(260, decorationY, 60),
+            new Vector3(285, decorationY, 55),
+
+            // RIGHT MID
+            new Vector3(310, decorationY, 60),
+            new Vector3(340, decorationY, 52),
+
+            // FUNNEL
+            new Vector3(370, decorationY, 50),
+            new Vector3(395, decorationY, 45),
+
+            // END AREA
+            new Vector3(420, decorationY, 45),
+            new Vector3(450, decorationY, 38)
         };
 
         for (int i = 0; i < decorationPositions.Length; i++)
@@ -319,9 +380,8 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
     void PositionPlayer()
     {
         if (player == null) return;
-
-        Vector3 scaledStart = playerStartPosition * levelScale;
-        player.position = scaledStart;
+        
+        player.position = playerStartPosition;
         player.rotation = Quaternion.identity;
     }
 

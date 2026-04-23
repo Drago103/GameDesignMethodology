@@ -157,9 +157,11 @@ MonoBehaviour:
   sandTextureTiling: {x: 10, y: 10}
   wallPrefab: {fileID: 4087777883169717714, guid: 9214e247838d1a44c811e962e4d54b6c, type: 3}
   treePrefabs:
-  - {fileID: 185962, guid: 9739a89a5ec460c4b94bb52719a0931c, type: 3}
+  - {fileID: 100000, guid: e7464e6962c79794bbfcdb1d60ea5cd1, type: 3}
   - {fileID: 143784, guid: 5d8a4c5c2390fc54e96a652c3eeaf313, type: 3}
   - {fileID: 178436, guid: 587331bb58ede6149bd7d31473a36202, type: 3}
+  - {fileID: 100000, guid: 8f34c244e0da945439f043bd7d958ecf, type: 3}
+  - {fileID: 117896, guid: 2150293d12bfb2448a976624bc72a6f2, type: 3}
   rockPrefabs:
   - {fileID: 116276, guid: 689a36ce1e8152f488b3a0d5fc644805, type: 3}
   - {fileID: 145164, guid: 8b8681c086a094348955216d4ef3cf0f, type: 3}
@@ -167,6 +169,8 @@ MonoBehaviour:
   - {fileID: 7965569358598647897, guid: 3abb08e4767af6d4ea424c2ac21d2857, type: 3}
   - {fileID: 175704, guid: fb9f189dcf5d2ad4aad003a8a44b136d, type: 3}
   - {fileID: 145430, guid: 82f6882977329724ca4b934e09af87fc, type: 3}
+  - {fileID: 124032, guid: 45b8cac9ed2e6a142ae411672ba866f9, type: 3}
+  - {fileID: 6699034651668152324, guid: 7d10455b20f56a64f8d39893e27a4b97, type: 3}
   wallHeight: 10
   wallThickness: 1
   wallBaseY: 0
@@ -174,7 +178,8 @@ MonoBehaviour:
   rockY: 0
   decorationY: 0
   player: {fileID: 1337145332}
-  playerStartPosition: {x: 100, y: 2, z: 10}
+  playerStartPosition: {x: 4, y: 0.5, z: 253}
+  playerStartRotation: {x: 0, y: 99, z: 0}
 --- !u!4 &424005961
 Transform:
   m_ObjectHideFlags: 0
@@ -277,12 +282,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 881309213}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.832, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.342, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1337145332}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &881309217
 MonoBehaviour:
@@ -748,6 +753,14 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3663652090126312773, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
+      propertyPath: JumpForce
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3663652090126312773, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
+      propertyPath: MoveSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3663652090126312773, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
       propertyPath: headTarget
       value: 
       objectReference: {fileID: 1459608887}
@@ -809,6 +822,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4094293969452445971, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1459608887}
+    - targetCorrespondingSourceObject: {fileID: 4094293969452445971, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 881309216}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
 --- !u!1001 &8996284547789425591
@@ -912,7 +928,6 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 881309216}
   - {fileID: 1963137657}
   - {fileID: 2041060986}
   - {fileID: 8996284547789425591}
