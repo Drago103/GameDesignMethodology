@@ -154,7 +154,7 @@ MonoBehaviour:
   floorTilesZ: 40
   tileSize: 10
   floorY: 0
-  sandTextureTiling: {x: 10, y: 10}
+  sandTextureTiling: {x: 5, y: 5}
   wallPrefab: {fileID: 4087777883169717714, guid: 9214e247838d1a44c811e962e4d54b6c, type: 3}
   treePrefabs:
   - {fileID: 100000, guid: e7464e6962c79794bbfcdb1d60ea5cd1, type: 3}
