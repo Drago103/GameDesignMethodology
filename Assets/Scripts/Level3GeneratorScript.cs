@@ -3,13 +3,20 @@ using System.Collections.Generic;
 
 public class HandcraftedDesertMapGenerator : MonoBehaviour
 {
+    
+    [Header("Level Scale")]
+    public float levelScale = 2.5f;
+
     [Header("Floor")]
     public GameObject sandTilePrefab;
     public int floorTilesX = 46;
     public int floorTilesZ = 22;
     public float tileSize = 10f;
-    public float floorY = 0f;
+    public float floorY = -0.1f;
 
+    [Header("Floor Texture")]
+    public Vector2 sandTextureTiling = new Vector2(6f, 6f);
+    
     [Header("Prefabs")]
     public GameObject wallPrefab;
     public GameObject[] treePrefabs;
@@ -38,7 +45,7 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
     public void GenerateMap()
     {
         ClearChildren();
-        GenerateFloor();
+       // GenerateFloor();
         GenerateWalls();
         GenerateTrees();
         GenerateRocks();
@@ -46,121 +53,139 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
         PositionPlayer();
     }
 
-    void GenerateFloor()
-    {
-        if (sandTilePrefab == null) return;
+    //void GenerateFloor()
+    //{
+      //  if (sandTilePrefab == null) return;
 
-        for (int x = 0; x < floorTilesX; x++)
-        {
-            for (int z = 0; z < floorTilesZ; z++)
-            {
-                Vector3 pos = new Vector3(x * tileSize, floorY, z * tileSize);
+        //for (int x = 0; x < floorTilesX; x++)
+        //{
+          //  for (int z = 0; z < floorTilesZ; z++)
+            //{
+              //  Vector3 pos = new Vector3(x * tileSize, floorY, z * tileSize);
 
-                GameObject tile = Instantiate(sandTilePrefab, pos, Quaternion.identity, transform);
-                tile.name = $"SandTile_{x}_{z}";
-                tile.transform.localScale = Vector3.one;
-            }
-        }
-    }
+                //GameObject tile = Instantiate(
+                  //  sandTilePrefab,
+                    //pos,
+                    //Quaternion.identity,
+                    //transform
+                //);
+
+                //tile.name = $"SandTile_{x}_{z}";
+                //tile.transform.localScale = new Vector3(tileSize, 0.2f, tileSize);
+
+                //Renderer rend = tile.GetComponent<Renderer>();
+                //if (rend != null)
+               // {
+                    //Material mat = rend.material;
+
+                    //if (mat.HasProperty("_BaseMap"))
+                       // mat.SetTextureScale("_BaseMap", sandTextureTiling);
+
+                   // if (mat.HasProperty("_MainTex"))
+                        //mat.SetTextureScale("_MainTex", sandTextureTiling);
+               // }
+           // }
+       // }
+    //}
 
     void GenerateWalls()
-{
-    if (wallPrefab == null) return;
-
-    // ===== START CORRIDOR (two parallel lines) =====
-    CreateWallChain(new Vector3[]
     {
-        new Vector3(0,0,115),
-        new Vector3(90,0,115)
-    });
+        if (wallPrefab == null) return;
 
-    CreateWallChain(new Vector3[]
-    {
-        new Vector3(0,0,90),
-        new Vector3(85,0,90),
-        new Vector3(110,0,75)
-    });
+        //START CORRIDOR (two parallel lines)
+        CreateWallChain(new Vector3[]
+        {
+            new Vector3(0,0,115),
+            new Vector3(90,0,115)
+        });
 
-    // ===== OUTER TOP WALL (zig-zag) =====
-    CreateWallChain(new Vector3[]
-    {
-        new Vector3(90,0,115),
-        new Vector3(135,0,130),
-        new Vector3(175,0,110),
-        new Vector3(220,0,118),
-        new Vector3(265,0,105),
-        new Vector3(310,0,90),
-        new Vector3(300,0,140),
-        new Vector3(470,0,90)
-    });
+        CreateWallChain(new Vector3[]
+        {
+            new Vector3(0,0,90),
+            new Vector3(85,0,90),
+            new Vector3(110,0,75)
+        });
 
-    // ===== OUTER BOTTOM WALL =====
-    CreateWallChain(new Vector3[]
-    {
-        new Vector3(110,0,75),
-        new Vector3(135,0,10),
-        new Vector3(200,0,0),
-        new Vector3(260,0,15),
-        new Vector3(300,0,30),
-        new Vector3(360,0,10),
-        new Vector3(430,0,25)
-    });
+        //OUTER TOP WALL (zig-zag)
+        CreateWallChain(new Vector3[]
+        {
+            new Vector3(90,0,115),
+            new Vector3(135,0,130),
+            new Vector3(175,0,110),
+            new Vector3(220,0,118),
+            new Vector3(265,0,105),
+            new Vector3(310,0,90),
+            new Vector3(300,0,140),
+            new Vector3(470,0,90)
+        });
 
-    // ===== INNER TOP CORRIDOR =====
-    CreateWallChain(new Vector3[]
-    {
-        new Vector3(170,0,85),
-        new Vector3(215,0,95),
-        new Vector3(260,0,80),
-        new Vector3(255,0,60)
-    });
+        //OUTER BOTTOM WALL
+        CreateWallChain(new Vector3[]
+        {
+            new Vector3(110,0,75),
+            new Vector3(135,0,10),
+            new Vector3(200,0,0),
+            new Vector3(260,0,15),
+            new Vector3(300,0,30),
+            new Vector3(360,0,10),
+            new Vector3(430,0,25)
+        });
 
-    // ===== INNER LOWER CORRIDOR =====
-    CreateWallChain(new Vector3[]
-    {
-        new Vector3(160,0,55),
-        new Vector3(205,0,65),
-        new Vector3(255,0,55),
-        new Vector3(330,0,35)
-    });
+        //INNER TOP CORRIDOR
+        CreateWallChain(new Vector3[]
+        {
+            new Vector3(170,0,85),
+            new Vector3(215,0,95),
+            new Vector3(260,0,80),
+            new Vector3(255,0,60)
+        });
 
-    // ===== LEFT DIAGONAL WALL =====
-    CreateWallChain(new Vector3[]
-    {
-        new Vector3(120,0,80),
-        new Vector3(150,0,20),
-        new Vector3(200,0,10)
-    });
+        //INNER LOWER CORRIDOR
+        CreateWallChain(new Vector3[]
+        {
+            new Vector3(160,0,55),
+            new Vector3(205,0,65),
+            new Vector3(255,0,55),
+            new Vector3(330,0,35)
+        });
 
-    // ===== RIGHT TRIANGLE FUNNEL =====
-    CreateWallChain(new Vector3[]
-    {
-        new Vector3(320,0,80),
-        new Vector3(430,0,50),
-        new Vector3(320,0,35),
-        new Vector3(340,0,55)
-    });
+        //LEFT DIAGONAL WALL
+        CreateWallChain(new Vector3[]
+        {
+            new Vector3(120,0,80),
+            new Vector3(150,0,20),
+            new Vector3(200,0,10)
+        });
 
-    // ===== RIGHT INNER LINE =====
-    CreateWallChain(new Vector3[]
-    {
-        new Vector3(300,0,50),
-        new Vector3(380,0,50)
-    });
+        //RIGHT TRIANGLE FUNNEL
+        CreateWallChain(new Vector3[]
+        {
+            new Vector3(320,0,80),
+            new Vector3(430,0,50),
+            new Vector3(320,0,35),
+            new Vector3(340,0,55)
+        });
 
-    // ===== FINAL END CORRIDOR =====
-    CreateWallChain(new Vector3[]
-    {
-        new Vector3(430,0,25),
-        new Vector3(480,0,40)
-    });
+        //RIGHT INNER LINE
+        CreateWallChain(new Vector3[]
+        {
+            new Vector3(300,0,50),
+            new Vector3(380,0,50)
+        });
 
-    CreateWallChain(new Vector3[]
-    {
-        new Vector3(470,0,90),
-        new Vector3(480,0,60)
-    });
-}
+        //FINAL END CORRIDOR
+        CreateWallChain(new Vector3[]
+        {
+            new Vector3(430,0,25),
+            new Vector3(480,0,40)
+        });
+
+        CreateWallChain(new Vector3[]
+        {
+            new Vector3(470,0,90),
+            new Vector3(480,0,60)
+        });
+    }
 
     void GenerateTrees()
     {
@@ -185,7 +210,16 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
         for (int i = 0; i < treePositions.Length; i++)
         {
             GameObject prefab = treePrefabs[i % treePrefabs.Length];
-            GameObject obj = Instantiate(prefab, treePositions[i], Quaternion.Euler(0f, i * 23f, 0f), transform);
+            Vector3 pos = treePositions[i] * levelScale;
+            pos.y = treeY;
+
+            GameObject obj = Instantiate(
+                prefab,
+                pos,
+                Quaternion.Euler(0f, i * 23f, 0f),
+                transform
+            );
+
             obj.transform.localScale = Vector3.one * 1.3f;
         }
     }
@@ -205,7 +239,16 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
         for (int i = 0; i < rockPositions.Length; i++)
         {
             GameObject prefab = rockPrefabs[i % rockPrefabs.Length];
-            GameObject obj = Instantiate(prefab, rockPositions[i], Quaternion.Euler(0f, i * 31f, 0f), transform);
+            Vector3 pos = rockPositions[i] * levelScale;
+            pos.y = rockY;
+
+            GameObject obj = Instantiate(
+                prefab,
+                pos,
+                Quaternion.Euler(0f, i * 31f, 0f),
+                transform
+            );
+
             obj.transform.localScale = Vector3.one * 1.6f;
         }
     }
@@ -225,7 +268,15 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
         for (int i = 0; i < decorationPositions.Length; i++)
         {
             GameObject prefab = decorationPrefabs[i % decorationPrefabs.Length];
-            Instantiate(prefab, decorationPositions[i], Quaternion.Euler(0f, i * 18f, 0f), transform);
+            Vector3 pos = decorationPositions[i] * levelScale;
+            pos.y = decorationY;
+
+            Instantiate(
+                prefab,
+                pos,
+                Quaternion.Euler(0f, i * 18f, 0f),
+                transform
+            );
         }
     }
 
@@ -239,6 +290,9 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
 
     void CreateWallSegment(Vector3 start, Vector3 end)
     {
+        start *= levelScale;
+        end *= levelScale;
+
         Vector3 flatDir = end - start;
         flatDir.y = 0f;
 
@@ -255,14 +309,19 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
 
         wall.transform.position = midpoint;
         wall.transform.rotation = rotation;
-        wall.transform.localScale = new Vector3(wallThickness, wallHeight, length);
+        wall.transform.localScale = new Vector3(
+            wallThickness,
+            wallHeight,
+            length
+        );
     }
 
     void PositionPlayer()
     {
         if (player == null) return;
 
-        player.position = playerStartPosition;
+        Vector3 scaledStart = playerStartPosition * levelScale;
+        player.position = scaledStart;
         player.rotation = Quaternion.identity;
     }
 
