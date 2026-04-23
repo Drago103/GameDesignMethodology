@@ -3,7 +3,6 @@ using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
-
     public QuickTimeEvent quickTimeEvent;
 
     private PlayerControls controls;
@@ -42,15 +41,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float maxDuration;
 
     [SerializeField] Rigidbody rb;
-    
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         controls = new PlayerControls();
 
-        rb.constraints = RigidbodyConstraints.FreezeRotationX |
-        RigidbodyConstraints.FreezeRotationZ;
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
 
         controls.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector3>();
@@ -62,7 +60,6 @@ public class PlayerMovement : MonoBehaviour
         currentYRotation = transform.eulerAngles.y;
 
         //  QTEObj = null;
-        
     }
 
     void OnEnable()
@@ -84,14 +81,14 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             ForwardMovement = moveInput.z;
-        }     
+        }
     }
 
     void MovePlayer()
     {
-       Vector3 Move = new Vector3(0f, 0f,  ForwardMovement);
-       Vector3 worldMove = transform.TransformDirection(Move) * MoveSpeed;
-       rb.MovePosition(rb.position + worldMove * Time.deltaTime);
+        Vector3 Move = new Vector3(0f, 0f, ForwardMovement);
+        Vector3 worldMove = transform.TransformDirection(Move) * MoveSpeed;
+        rb.MovePosition(rb.position + worldMove * Time.deltaTime);
     }
 
     void RotatePlayer()
@@ -103,10 +100,10 @@ public class PlayerMovement : MonoBehaviour
             headTarget.rotation = transform.rotation;
     }
 
-            
+
     void Jumping()
     {
-       if(isGrounded && controls.Player.Jump.triggered)
+        if (isGrounded && controls.Player.Jump.triggered)
         {
             rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
         }
@@ -126,13 +123,13 @@ public class PlayerMovement : MonoBehaviour
         if (other.collider.CompareTag("ReboundWall") && !isGrounded)
         {
             Debug.Log("Hit a Rebound Wall");
-           
+
             if (!IsRotating)
             {
                 Debug.Log("player is rotating");
                 StartCoroutine(WallRotate(0.35f));
             }
-                
+
             Vector3 localVel = transform.InverseTransformDirection(rb.linearVelocity);
             localVel.z = -localVel.z; // reverse forward/backward
             rb.linearVelocity = transform.TransformDirection(localVel);
@@ -167,11 +164,10 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("Player is off the ground");
         }
 
-         if (other.collider.CompareTag("Anti-RunZone"))
+        if (other.collider.CompareTag("Anti-RunZone"))
         {
             InRunZone = false;
         }
-
     }
 
     void OnTriggerEnter(Collider other)
@@ -180,7 +176,7 @@ public class PlayerMovement : MonoBehaviour
         {
             //ShowSlidePrompt();
             QTEObj.SetActive(true);
-            qteRoutine = StartCoroutine(runQTE(maxDuration));   
+            qteRoutine = StartCoroutine(runQTE(maxDuration));
             Debug.Log("can slide, hit e to slide.");
             CanSlide = true;
         }
@@ -251,7 +247,7 @@ public class PlayerMovement : MonoBehaviour
         isSliding = false;
     }
 
-   IEnumerator runQTE(float duration)
+    IEnumerator runQTE(float duration)
     {
         originalSpeed = MoveSpeed;
         MoveSpeed *= slowDownFactor;
@@ -289,7 +285,6 @@ public class PlayerMovement : MonoBehaviour
         IsQTE = false;
         CanSlide = false;
         MoveSpeed = originalSpeed;
-
     }
 
     // Update is called once per frame
@@ -300,6 +295,7 @@ public class PlayerMovement : MonoBehaviour
         {
             RotatePlayer();
         }
+
         Jumping();
         ResetCam();
     }
