@@ -1,409 +1,441 @@
-    using UnityEngine;
-    using System.Collections;
+using UnityEngine;
+using System.Collections;
 
-    public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
+{
+    public QuickTimeEvent quickTimeEvent;
+
+    private PlayerControls controls;
+    private float ForwardMovement;
+
+    private float originalSpeed;
+
+    float wallReattachDelay = 0.2f;
+    float lastWallJumpTime = -10f;
+
+    private Vector3 moveInput;
+    private Vector3 normalScale = new Vector3(1f, 1f, 1f);
+    private Vector3 slideScale = new Vector3(1f, 0.3f, 1f);
+
+    private Vector3 wallNormal;
+    private Coroutine qteRoutine;
+
+    [SerializeField] Transform headTarget;
+    [SerializeField] GameObject QTEObj;
+
+    [SerializeField] float MoveSpeed;
+    [SerializeField] float JumpForce;
+    [SerializeField] float reboundForce;
+    [SerializeField] float slideVel;
+    [SerializeField] float slideDuration;
+
+    [SerializeField] float slowDownFactor;
+
+    [SerializeField] float slidingDownWallSpeed;
+
+    [SerializeField] Transform model;
+
+    private bool isGrounded;
+    private bool InRunZone;
+    private bool CanSlide;
+    private bool IsRotating = false;
+    private bool isSliding = false;
+    private bool OnWall = false;
+
+    bool wallJumping = false;
+
+    private bool IsQTE = false;
+
+    private float currentYRotation;
+
+    private Coroutine wallSlideRoutine;
+
+    [SerializeField] float maxDuration;
+
+    [SerializeField] Rigidbody rb;
+
+    void Awake()
     {
+        Debug.Log("[INIT] Awake called");
 
-        public QuickTimeEvent quickTimeEvent;
+        controls = new PlayerControls();
 
-        private PlayerControls controls;
-        private float ForwardMovement;
+        rb.constraints = RigidbodyConstraints.FreezeRotationX |
+                         RigidbodyConstraints.FreezeRotationZ;
 
-        private float originalSpeed;
-
-        float wallReattachDelay = 0.35f;
-        float lastWallJumpTime = -10f;
-
-        private Vector3 moveInput;
-        private Vector3 normalScale = new Vector3(1f, 1f, 1f);
-        private Vector3 slideScale = new Vector3(1f, 0.3f, 1f);
-
-        private Vector3 wallNormal;
-        private Coroutine qteRoutine;
-
-        //Camera obj
-        [SerializeField] Transform headTarget;
-        [SerializeField] GameObject QTEObj;
-
-        //change-able variable setup
-        [SerializeField] float MoveSpeed;
-        [SerializeField] float JumpForce;
-        [SerializeField] float reboundForce;
-        [SerializeField] float slideVel;
-        [SerializeField] float slideDuration;
-
-        [SerializeField] float slowDownFactor;
-
-        [SerializeField] float slidingDownWallSpeed;
-
-        [SerializeField] Transform model;
-
-        private bool isGrounded;
-        private bool InRunZone;
-
-        private float currentYRotation;
-
-        private Coroutine wallSlideRoutine;
-
-        [SerializeField] float maxDuration;
-
-        [SerializeField] Rigidbody rb;
-
-        enum PlayerState { Normal, WallSliding, WallJumping, Rotating, Sliding, QTE }
-        PlayerState state;
-
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Awake()
+        controls.Player.Move.performed += ctx =>
         {
-            state = PlayerState.Normal;
+            moveInput = ctx.ReadValue<Vector3>();
+            Debug.Log("[INPUT] Move Input: " + moveInput);
+        };
 
-            controls = new PlayerControls();
+        controls.Player.Move.canceled += ctx =>
+        {
+            moveInput = Vector3.zero;
+            Debug.Log("[INPUT] Move Canceled");
+        };
 
-            rb.constraints = RigidbodyConstraints.FreezeRotationX |
-            RigidbodyConstraints.FreezeRotationZ;
+        quickTimeEvent.SetMaxDuration(maxDuration);
+        ForwardMovement = 1f;
 
+        currentYRotation = transform.eulerAngles.y;
 
-            controls.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector3>();
-            controls.Player.Move.canceled += ctx => moveInput = Vector3.zero;
+        Debug.Log("[INIT] Player initialized");
+    }
 
-            quickTimeEvent.SetMaxDuration(maxDuration);
+    void OnEnable()
+    {
+        Debug.Log("[STATE] Controls Enabled");
+        controls.Player.Enable();
+    }
+
+    void OnDisable()
+    {
+        Debug.Log("[STATE] Controls Disabled");
+        controls.Player.Disable();
+    }
+
+    void DetermineForwardMovement()
+    {
+        float old = ForwardMovement;
+
+        if (!InRunZone)
             ForwardMovement = 1f;
+        else
+            ForwardMovement = moveInput.z;
 
-            currentYRotation = transform.eulerAngles.y;
+        if (old != ForwardMovement)
+            Debug.Log("[MOVE] ForwardMovement changed: " + ForwardMovement);
+    }
 
-            //  QTEObj = null;
-            
-        }
+    void MovePlayer()
+    {
+        // if (OnWall)
+        // {
+        //     Debug.Log("[MOVE] Blocked: OnWall");
+        //     return;
+        // }
 
-        void OnEnable()
-        {
-            controls.Player.Enable();
-        }
+        // if (wallJumping)
+        // {
+        //     Debug.Log("[MOVE] Blocked: wallJumping");
+        //     return;
+        // }
+        // {
+        //     Debug.Log("[MOVE] Movement blocked (OnWall or wallJumping)");
+        //     return;
+        // }
 
-        void OnDisable()
-        {
-            controls.Player.Disable();
-        }
+        if(!isGrounded) return;
 
-        void DetermineForwardMovement()
-        {
-            if (!InRunZone)
-            {
-                ForwardMovement = 1f;
-            }
-            else
-            {
-                ForwardMovement = moveInput.z;
-            }     
-        }
+        Debug.Log($"[Move] Unblocked OnWall is {OnWall}");
+        Debug.Log($"[Move] Unblocked wallJumping is {wallJumping}");
 
-        void MovePlayer()
-        {
-        if (state == PlayerState.WallSliding ||
-            state == PlayerState.WallJumping ||
-            state == PlayerState.Rotating ||
-            state == PlayerState.Sliding)
-            return;
+        DetermineForwardMovement();
 
-        Debug.Log($"[MovePlayer] state={state} vel={rb.linearVelocity}");
-        Vector3 Move = new Vector3(0f, 0f,  ForwardMovement);
+        Vector3 Move = new Vector3(0f, 0f, ForwardMovement);
         Vector3 worldMove = transform.TransformDirection(Move) * MoveSpeed;
-        rb.linearVelocity = new Vector3(worldMove.x, rb.linearVelocity.y, worldMove.z);
-        }
 
-        void RotatePlayer()
+        rb.linearVelocity = new Vector3(worldMove.x, rb.linearVelocity.y, worldMove.z);
+
+        Debug.Log("[MOVE] Velocity set to: " + rb.linearVelocity);
+    }
+
+    void RotatePlayer()
+    {
+        currentYRotation += moveInput.x;
+        rb.MoveRotation(Quaternion.Euler(0f, currentYRotation, 0f));
+
+        Debug.Log("[ROTATE] Rotating to Y: " + currentYRotation);
+
+        if (!IsRotating)
+            headTarget.rotation = transform.rotation;
+    }
+
+    void Jumping()
+    {
+        if (isGrounded && controls.Player.Jump.triggered)
         {
-            currentYRotation += moveInput.x; // or multiply by turn speed
-            rb.MoveRotation(Quaternion.Euler(0f, currentYRotation, 0f));
+            Debug.Log("[JUMP] Jump triggered");
+            rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+        }
+    }
+
+    void ResetCam()
+    {
+        if (controls.Player.ResetCam.triggered)
+        {
+            Debug.Log("[CAM] Reset camera");
             headTarget.rotation = transform.rotation;
         }
+    }
 
-                
-        void Jumping()
-        {
-        if(isGrounded && controls.Player.Jump.triggered)
-            {
-                rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
-            }
-        }
+    void WallJump()
+    {
+        Debug.Log("[WALL] WallJump executed");
 
-        void ResetCam()
-        {
-            if (controls.Player.ResetCam.triggered)
-            {
-                headTarget.rotation = transform.rotation;
-            }
-        }
+        lastWallJumpTime = Time.time;
 
-        void WallJump()
-        {
-            lastWallJumpTime = Time.time;
+        rb.linearVelocity = Vector3.zero;
 
-            rb.linearVelocity = Vector3.zero;
+        rb.AddForce(wallNormal.normalized * JumpForce * 1.5f, ForceMode.Impulse);
+        rb.AddForce(Vector3.up * JumpForce * 2f, ForceMode.Impulse);
+    }
 
-            rb.AddForce(wallNormal.normalized * JumpForce * 1.5f, ForceMode.Impulse);
-            rb.AddForce(Vector3.up * JumpForce * 2f, ForceMode.Impulse);
-
-            Debug.Log("Player is wall jumping!!!");
-        }
-
-        void handleWallJump()
-        {
-            if (state != PlayerState.WallSliding) return;
-
-            if(controls.Player.Jump.triggered)
-            {
-                Debug.Log("Perform Wall jump");
-
-                if (wallSlideRoutine != null)
-                    StopCoroutine(wallSlideRoutine);
-
-                state = PlayerState.WallJumping;
-                WallJump();
-                StartCoroutine(UnlockWallJump());
-            }
-        }
-        void ReboundWall()
-        {
-           if (state == PlayerState.WallSliding ||
-            state == PlayerState.WallJumping ||
-            state == PlayerState.Rotating)
+    void handleWallJump()
+    {
+        if (!OnWall || IsRotating || wallJumping)
             return;
 
-            StartCoroutine(WallSequence());
-            
-        }
-
-        void ExitReboundWall()
+        if (controls.Player.Jump.triggered)
         {
-            if (state != PlayerState.WallSliding) return;
-
-            state = PlayerState.Normal;
+            Debug.Log("[WALL] Wall jump input detected");
 
             if (wallSlideRoutine != null)
+            {
+                Debug.Log("[WALL] Stopping wall slide routine");
                 StopCoroutine(wallSlideRoutine);
+            }
+
+            wallJumping = true;
+            OnWall = false;
+
+            WallJump();
+            StartCoroutine(UnlockWallJump());
+        }
+    }
+
+    void ReboundWall()
+    {
+        if (!OnWall)
+        {
+            Debug.Log("[WALL] ReboundWall triggered");
+
+            OnWall = true;
+
+            if (!IsRotating)
+            {
+                Debug.Log("[WALL] Starting WallRotate");
+                StartCoroutine(WallRotate(0.25f));
+            }
+
+            wallSlideRoutine = StartCoroutine(WallSliding());
+        }
+    }
+
+    void OnCollisionEnter(Collision other)
+    {
+        Debug.Log("[COLLISION ENTER] Hit: " + other.collider.tag);
+
+        if (other.collider.CompareTag("Ground"))
+        {
+            isGrounded = true;
+            Debug.Log("[STATE] Grounded = TRUE");
+
+            Vector3 e = transform.eulerAngles;
+            transform.rotation = Quaternion.Euler(0f, e.y, 0f);
+            return;
         }
 
-        void OnCollisionEnter(Collision other)
+        if (other.collider.CompareTag("Anti-RunZone"))
         {
+            InRunZone = true;
+            Debug.Log("[STATE] Entered RunZone");
+        }
+    }
 
-            if (other.collider.CompareTag("Ground"))
+    void OnCollisionExit(Collision other)
+    {
+        Debug.Log("[COLLISION EXIT] Left: " + other.collider.tag);
+
+        if (other.collider.CompareTag("Ground"))
+        {
+            isGrounded = false;
+            Debug.Log("[STATE] Grounded = FALSE");
+        }
+
+        if (other.collider.CompareTag("Anti-RunZone"))
+        {
+            InRunZone = false;
+            Debug.Log("[STATE] Exited RunZone");
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("[TRIGGER ENTER] Hit: " + other.tag);
+
+        if (other.CompareTag("LowObj"))
+        {
+            Debug.Log("[QTE] QTE Triggered");
+
+            QTEObj.SetActive(true);
+            qteRoutine = StartCoroutine(runQTE(maxDuration));
+
+            CanSlide = true;
+        }   
+    }
+
+    void OnCollisionStay(Collision other)
+    {
+        if (other.collider.CompareTag("ReboundWall") && !isGrounded)
+        {
+            Debug.Log("[WALL] Staying on ReboundWall");
+
+            if (Time.time < lastWallJumpTime + wallReattachDelay)
             {
-                isGrounded = true;
-                Debug.Log("Player is on the ground");
-                Vector3 e = transform.eulerAngles;
-                transform.rotation = Quaternion.Euler(0f, e.y, 0f);
+                Debug.Log("[WALL] Ignoring wall (reattach delay)");
                 return;
             }
 
-            if (other.collider.CompareTag("Anti-RunZone"))
+            if (!OnWall)
             {
-                InRunZone = true;
+                wallNormal = other.GetContact(0).normal;
+                Debug.Log("[WALL] Wall normal: " + wallNormal);
+
+                ReboundWall();
             }
         }
+    }
 
-        void OnCollisionExit(Collision other)
+    IEnumerator UnlockWallJump()
+    {
+        Debug.Log("[WALL] UnlockWallJump started");
+        yield return new WaitForSeconds(0.25f);
+        wallJumping = false;
+        Debug.Log("[WALL] WallJump unlocked");
+    }
+
+    IEnumerator WallSliding()
+    {
+        Debug.Log("[WALL] WallSliding started");
+
+        OnWall = true;
+
+        while (OnWall && !isGrounded)
         {
-            if (other.collider.CompareTag("Ground"))
-            {
-                isGrounded = false;
-                Debug.Log("Player is off the ground");
-            }
+            Vector3 vel = rb.linearVelocity;
 
-            if (other.collider.CompareTag("Anti-RunZone"))
-            {
-                InRunZone = false;
-            }
+            if (vel.y < -slidingDownWallSpeed)
+                vel.y = -slidingDownWallSpeed;
 
-            if (other.collider.CompareTag("ReboundWall"))
-            {
-                ExitReboundWall();
-            }
+            vel.x *= 0.1f;
+            vel.z *= 0.1f;
 
+            rb.linearVelocity = vel;
+
+            Debug.Log("[WALL] Sliding velocity: " + vel);
+
+            yield return null;
         }
 
-        void OnTriggerEnter(Collider other)
+        Debug.Log("[WALL] WallSliding ended");
+        OnWall = false;
+    }
+
+    IEnumerator WallRotate(float duration)
+    {
+        Debug.Log("[WALL] WallRotate started");
+
+        IsRotating = true;
+
+        float startY = currentYRotation;
+        float endY = currentYRotation + 180f;
+
+        float t = 0f;
+
+        while (t < 1f)
         {
-            if (other.CompareTag("LowObj"))
-            {
-                //ShowSlidePrompt();
-                QTEObj.SetActive(true);
-                qteRoutine = StartCoroutine(runQTE(maxDuration));   
-                Debug.Log("can slide, hit e to slide.");
-                //state = PlayerState.QTE;
-            }
+            t += Time.deltaTime / duration;
+            currentYRotation = Mathf.Lerp(startY, endY, t);
+
+            transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
+            headTarget.rotation = transform.rotation;
+
+            Debug.Log("[WALL] Rotating Y: " + currentYRotation);
+
+            yield return null;
         }
 
-        void OnCollisionStay(Collision other)
+        Debug.Log("[WALL] WallRotate finished");
+
+        IsRotating = false;
+        wallJumping = false;
+    }
+
+    IEnumerator SlideRoutine()
+    {
+        Debug.Log("[SLIDE] SlideRoutine started");
+
+        isSliding = true;
+
+        model.localScale = slideScale;
+
+        rb.linearVelocity += transform.forward * slideVel;
+        Debug.Log("[SLIDE] Slide burst velocity: " + rb.linearVelocity);
+
+        yield return new WaitForSeconds(slideDuration);
+
+        model.localScale = normalScale;
+
+        isSliding = false;
+
+        Debug.Log("[SLIDE] SlideRoutine ended");
+    }
+
+    IEnumerator runQTE(float duration)
+    {
+        Debug.Log("[QTE] QTE started");
+
+        originalSpeed = MoveSpeed;
+        MoveSpeed *= slowDownFactor;
+
+        float timer = 0f;
+        quickTimeEvent.SetDuration(0f);
+
+        while (timer < duration)
         {
-            if (other.collider.CompareTag("ReboundWall") && !isGrounded)
+            timer += Time.deltaTime;
+            quickTimeEvent.SetDuration(timer);
+
+            if (controls.Player.Interact.triggered)
             {
-               if (!isGrounded &&
-                    rb.linearVelocity.y <= 0f &&
-                    Time.time >= lastWallJumpTime + wallReattachDelay &&
-                    state != PlayerState.WallJumping &&
-                    state != PlayerState.Rotating &&
-                    state != PlayerState.Sliding)
-                {
-                    wallNormal = other.GetContact(0).normal;
-                    ReboundWall();
-                }
-                
-                //wallJumping = false;
-            
-            }
-        }
-
-        /* void OnTriggerExit(Collider other)
-        {
-            if (other.CompareTag("LowObj"))
-            {
-                CanSlide = false;
-                IsQTE = false;
-
-                transform.localScale = normalScale;
-
-                if (qteRoutine != null)
-                {
-                    StopCoroutine(qteRoutine);
-                    qteRoutine = null;
-                }
+                Debug.Log("[QTE] SUCCESS");
 
                 quickTimeEvent.ResetUI();
                 QTEObj.SetActive(false);
 
-                Debug.Log("cannot slide");
-            }
-        } */
+                IsQTE = false;
+                CanSlide = false;
 
-        IEnumerator UnlockWallJump()
-        {
-            yield return new WaitForSeconds(0.25f);
-            //state = PlayerState.Normal;
-        }
+                MoveSpeed = originalSpeed;
 
-        IEnumerator WallSequence()
-        {
-            state = PlayerState.Rotating;
-
-            yield return StartCoroutine(WallRotate(0.25f));
-
-            state = PlayerState.WallSliding;
-            wallSlideRoutine = StartCoroutine(WallSliding());
-        }
-
-        IEnumerator WallSliding()
-        {
-            // Reduce downward speed to create a sliding effect
-            while (state == PlayerState.WallSliding && !isGrounded)
-            {
-                Vector3 vel = rb.linearVelocity;
-
-                // Clamp downward velocity
-                if (vel.y < -slidingDownWallSpeed)
-                    vel.y = -slidingDownWallSpeed;
-
-                vel.x *=0.1f;
-                vel.z *=0.1f;
-
-                rb.linearVelocity = vel;
-
-                yield return null;
+                StartCoroutine(SlideRoutine());
+                yield break;
             }
 
-            state = PlayerState.Normal;
+            yield return null;
         }
 
-        IEnumerator WallRotate(float duration)
-        {
+        Debug.Log("[QTE] FAILED");
 
-            float startY = currentYRotation;
-            float endY = currentYRotation + 180f;
+        quickTimeEvent.ResetUI();
+        QTEObj.SetActive(false);
 
-            float t = 0f;
-
-            while (t < 1f)
-            {
-                t += Time.deltaTime / duration;
-                currentYRotation = Mathf.Lerp(startY, endY, t);
-                transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
-
-                headTarget.rotation = transform.rotation;
-                yield return null;
-            }
-       
-        }
-
-
-        IEnumerator SlideRoutine()
-        {
-            state = PlayerState.Sliding;
-
-            // Shrink player
-            model.localScale = slideScale;
-
-            // Add forward burst
-            rb.linearVelocity += transform.forward * slideVel;
-
-            // Stay in slide for a moment
-            yield return new WaitForSeconds(slideDuration);
-
-            // Return to normal size
-            model.localScale = normalScale;
-
-            state = PlayerState.Normal;
-        }
-
-    IEnumerator runQTE(float duration)
-        {
-            state = PlayerState.QTE;
-            originalSpeed = MoveSpeed;
-            MoveSpeed *= slowDownFactor;
-            float timer = 0f;
-            quickTimeEvent.SetDuration(0f);
-
-            while (timer < duration)
-            {
-                timer += Time.deltaTime;
-                quickTimeEvent.SetDuration(timer);
-
-                if (controls.Player.Interact.triggered)
-                {
-                    Debug.Log("QTE success");
-
-                    quickTimeEvent.ResetUI();
-                    QTEObj.SetActive(false);
-
-                    state = PlayerState.Normal;
-
-                    MoveSpeed = originalSpeed;
-
-                    StartCoroutine(SlideRoutine());
-
-                    yield break;
-                }
-
-                yield return null;
-            }
-
-            Debug.Log("QTE failed");
-            quickTimeEvent.ResetUI();
-            QTEObj.SetActive(false);
-            state = PlayerState.Normal;
-            MoveSpeed = originalSpeed;
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            MovePlayer();
-            if (state == PlayerState.Normal && isGrounded)
-            {
-                RotatePlayer();
-            }
-            Jumping();
-            ResetCam();
-            handleWallJump();
-        }
+        IsQTE = false;
+        CanSlide = false;
+        MoveSpeed = originalSpeed;
     }
+
+    void Update()
+    {
+        MovePlayer();
+
+        if (!IsRotating && isGrounded && !CanSlide)
+            RotatePlayer();
+
+        Jumping();
+        ResetCam();
+        handleWallJump();
+    }
+}
