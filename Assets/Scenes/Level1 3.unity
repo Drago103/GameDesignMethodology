@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   rockPrefabs:
-  - {fileID: 145164, guid: 8b8681c086a094348955216d4ef3cf0f, type: 3}
+  - {fileID: 145164, guid: 03690b82f3ab1bc4586b19f8044d4da4, type: 3}
   areaCenter: {x: 475, y: 80, z: 170}
   areaSize: {x: 450, y: 20, z: 315}
   spawnInterval: 1.5
@@ -210,18 +210,18 @@ MonoBehaviour:
   wallPrefab: {fileID: 4087777883169717714, guid: 9214e247838d1a44c811e962e4d54b6c, type: 3}
   treePrefabs:
   - {fileID: 100000, guid: e7464e6962c79794bbfcdb1d60ea5cd1, type: 3}
-  - {fileID: 143784, guid: 5d8a4c5c2390fc54e96a652c3eeaf313, type: 3}
-  - {fileID: 178436, guid: 587331bb58ede6149bd7d31473a36202, type: 3}
+  - {fileID: 143784, guid: efd5fd71d7d29884093347c50a7d436b, type: 3}
+  - {fileID: 178436, guid: 74fc8140219b58f48b1333261d4cb80b, type: 3}
   - {fileID: 100000, guid: 8f34c244e0da945439f043bd7d958ecf, type: 3}
-  - {fileID: 117896, guid: 2150293d12bfb2448a976624bc72a6f2, type: 3}
+  - {fileID: 117896, guid: 937a9a08337a5634e8ed957aa703e407, type: 3}
   rockPrefabs:
-  - {fileID: 116276, guid: 689a36ce1e8152f488b3a0d5fc644805, type: 3}
-  - {fileID: 145164, guid: 8b8681c086a094348955216d4ef3cf0f, type: 3}
+  - {fileID: 116276, guid: 3611ce2f5602bd64c8ac9e1a4c70148c, type: 3}
+  - {fileID: 145164, guid: 03690b82f3ab1bc4586b19f8044d4da4, type: 3}
   decorationPrefabs:
   - {fileID: 7965569358598647897, guid: 3abb08e4767af6d4ea424c2ac21d2857, type: 3}
-  - {fileID: 175704, guid: fb9f189dcf5d2ad4aad003a8a44b136d, type: 3}
-  - {fileID: 145430, guid: 82f6882977329724ca4b934e09af87fc, type: 3}
-  - {fileID: 124032, guid: 45b8cac9ed2e6a142ae411672ba866f9, type: 3}
+  - {fileID: 175704, guid: 2ae35ee34009e5644a534c04f4b8e209, type: 3}
+  - {fileID: 145430, guid: 761209a7fcd5e514494840386025d698, type: 3}
+  - {fileID: 124032, guid: 36e88df07fe5b2147875c3e3fc4d3714, type: 3}
   - {fileID: 6699034651668152324, guid: 7d10455b20f56a64f8d39893e27a4b97, type: 3}
   wallHeight: 10
   wallThickness: 1

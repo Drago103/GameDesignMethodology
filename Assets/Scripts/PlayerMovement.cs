@@ -282,11 +282,11 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.Log("[WALL] Staying on ReboundWall");
 
-            // if (Time.time < lastWallJumpTime + wallReattachDelay)
-            // {
-            //     Debug.Log("[WALL] Ignoring wall (reattach delay)");
-            //     return;
-            // }
+            if (Time.time < lastWallJumpTime + wallReattachDelay)
+            {
+                Debug.Log("[WALL] Ignoring wall (reattach delay)");
+                return;
+            }
 
             if (!OnWall)
             {
