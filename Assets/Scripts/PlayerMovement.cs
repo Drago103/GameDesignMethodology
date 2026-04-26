@@ -179,7 +179,7 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = Vector3.zero;
 
         rb.AddForce(wallNormal.normalized * JumpForce * 1.5f, ForceMode.Impulse);
-        rb.AddForce(Vector3.up * JumpForce * 2f, ForceMode.Impulse);
+        rb.AddForce(Vector3.up * JumpForce * 1.5f, ForceMode.Impulse);
     }
 
     void handleWallJump()
