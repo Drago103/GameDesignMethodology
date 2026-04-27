@@ -10,6 +10,7 @@ TagManager:
   - LowObj
   - Anti-RunZone
   - Roof
+  - Gameover
   layers:
   - Default
   - TransparentFX

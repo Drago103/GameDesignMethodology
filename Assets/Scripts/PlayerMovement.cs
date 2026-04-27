@@ -42,6 +42,8 @@ public class PlayerMovement : MonoBehaviour
     private bool isSliding = false;
     private bool OnWall = false;
 
+    private bool PendingSlide = false;
+
     bool wallJumping = false;
 
     private bool IsQTE = false;
@@ -410,7 +412,7 @@ public class PlayerMovement : MonoBehaviour
 
                 MoveSpeed = originalSpeed;
 
-                StartCoroutine(SlideRoutine());
+                PendingSlide = true;
                 yield break;
             }
 
@@ -437,5 +439,10 @@ public class PlayerMovement : MonoBehaviour
         Jumping();
         ResetCam();
         handleWallJump();
+        if (PendingSlide && isGrounded)
+        {
+            PendingSlide = false;
+            StartCoroutine(SlideRoutine());
+        }
     }
 }
