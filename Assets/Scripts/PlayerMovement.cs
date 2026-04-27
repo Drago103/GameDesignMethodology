@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
 
     private PlayerControls controls;
     private float ForwardMovement;
+    public float forwardMovement => ForwardMovement; // yabadaba
 
     private float originalSpeed;
 
@@ -24,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] GameObject QTEObj;
 
     [SerializeField] float MoveSpeed;
+    public float moveSpeed => MoveSpeed; //yaba
     [SerializeField] float JumpForce;
     [SerializeField] float reboundForce;
     [SerializeField] float slideVel;
