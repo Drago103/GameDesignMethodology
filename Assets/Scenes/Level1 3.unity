@@ -149,7 +149,7 @@ Light:
   m_Type: 0
   m_Color: {r: 0.7695417, g: 0.89997417, b: 1, a: 1}
   m_Intensity: 30
-  m_Range: 300
+  m_Range: 20
   m_SpotAngle: 60
   m_InnerSpotAngle: 30
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -574,10 +574,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   player: {fileID: 1337145332}
-  height: 40
+  height: 8
   spotlight: {fileID: 144681299}
   lookOffset: 1.5
-  lightIntensity: 30
+  baseIntensity: 60
+  flickerAmount: 10
+  flickerSpeed: 0.5
 --- !u!4 &1017665469
 Transform:
   m_ObjectHideFlags: 0
