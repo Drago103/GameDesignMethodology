@@ -239,11 +239,6 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if (other.collider.CompareTag("Anti-RunZone"))
-        {
-            InRunZone = true;
-            Debug.Log("[STATE] Entered RunZone");
-        }
     }
 
     void OnCollisionExit(Collision other)
@@ -254,12 +249,6 @@ public class PlayerMovement : MonoBehaviour
         {
             isGrounded = false;
             Debug.Log("[STATE] Grounded = FALSE");
-        }
-
-        if (other.collider.CompareTag("Anti-RunZone"))
-        {
-            InRunZone = false;
-            Debug.Log("[STATE] Exited RunZone");
         }
     }
 
@@ -276,10 +265,35 @@ public class PlayerMovement : MonoBehaviour
 
             CanSlide = true;
         }   
+
+        if (other.CompareTag("Anti-RunZone"))
+        {
+            InRunZone = true;
+            Debug.Log("[STATE] Entered RunZone");
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Anti-RunZone"))
+        {
+            InRunZone = false;
+            Debug.Log("[STATE] Exited RunZone");
+        }
     }
 
     void OnCollisionStay(Collision other)
     {
+        if (other.collider.CompareTag("Ground"))
+        {
+            isGrounded = true;
+            Debug.Log("[STATE] Grounded = TRUE");
+
+            Vector3 e = transform.eulerAngles;
+            transform.rotation = Quaternion.Euler(0f, e.y, 0f);
+            return;
+        }
+
         if (other.collider.CompareTag("ReboundWall") && !isGrounded)
         {
             Debug.Log("[WALL] Staying on ReboundWall");
@@ -433,7 +447,7 @@ public class PlayerMovement : MonoBehaviour
     {
         MovePlayer();
 
-        if (!IsRotating && isGrounded && !CanSlide)
+        if (!IsRotating && isGrounded && !isSliding)
             RotatePlayer();
 
         Jumping();
