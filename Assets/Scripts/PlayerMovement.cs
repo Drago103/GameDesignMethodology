@@ -24,6 +24,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] GameObject QTEObj;
 
     [SerializeField] float MoveSpeed;
+    public float moveSpeed
+    {
+        get => MoveSpeed;
+        set => MoveSpeed = value;
+    }
+    public bool movementLocked = false;
+
     [SerializeField] float JumpForce;
     [SerializeField] float reboundForce;
     [SerializeField] float slideVel;
@@ -41,16 +48,18 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] Transform model;
 
     private bool isGrounded;
-    private bool InRunZone;
+    public bool InRunZone;
+
     private bool CanSlide;
     private bool IsRotating = false;
     private bool isSliding = false;
     private bool OnWall = false;
 
+    private bool PendingSlide = false;
+
     bool wallJumping = false;
 
     private bool IsQTE = false;
-
     private bool isDashing = false;
 
     private float lastDashTime = -Mathf.Infinity;
@@ -113,10 +122,14 @@ public class PlayerMovement : MonoBehaviour
     {
         float old = ForwardMovement;
 
-        if (!InRunZone)
-            ForwardMovement = 1f;
+        if (!movementLocked)
+            if (!InRunZone)
+                ForwardMovement = 1f;
+            
+            else
+                ForwardMovement = moveInput.z;
         else
-            ForwardMovement = moveInput.z;
+            ForwardMovement = 0f;
 
         if (old != ForwardMovement)
             Debug.Log("[MOVE] ForwardMovement changed: " + ForwardMovement);
@@ -124,14 +137,30 @@ public class PlayerMovement : MonoBehaviour
 
     void MovePlayer()
     {
+        // if (OnWall)
+        // {
+        //     Debug.Log("[MOVE] Blocked: OnWall");
+        //     return;
+        // }
+
+        // if (wallJumping)
+        // {
+        //     Debug.Log("[MOVE] Blocked: wallJumping");
+        //     return;
+        // }
+        // {
+        //     Debug.Log("[MOVE] Movement blocked (OnWall or wallJumping)");
+        //     return;
+        // }
         if (isDashing) return;
-        if (!isGrounded) return;
+        if(!isGrounded) return;
 
         Debug.Log($"[Move] Unblocked OnWall is {OnWall}");
         Debug.Log($"[Move] Unblocked wallJumping is {wallJumping}");
 
         DetermineForwardMovement();
 
+       
         Vector3 Move = new Vector3(moveInput.x, 0f, ForwardMovement);
         Vector3 worldMove = transform.TransformDirection(Move) * MoveSpeed;
         Vector3 slopeMove = Vector3.ProjectOnPlane(worldMove, groundNormal).normalized * MoveSpeed;
@@ -147,14 +176,14 @@ public class PlayerMovement : MonoBehaviour
 
     void CheckDashInput()
     {
-        if (controls.Player.Dash.triggered && !isDashing && Time.time >= lastDashTime + dashCooldown && !OnWall &&
-            !wallJumping)
+        if (controls.Player.Dash.triggered && !isDashing && Time.time >= lastDashTime + dashCooldown && !OnWall && !wallJumping)
         {
             Debug.Log("Dash is triggered");
             lastDashTime = Time.time;
             StartCoroutine(DashRoutine());
         }
     }
+
 
     void RotatePlayer()
     {
@@ -195,7 +224,7 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = Vector3.zero;
 
         rb.AddForce(wallNormal.normalized * JumpForce * 1.5f, ForceMode.Impulse);
-        rb.AddForce(Vector3.up * JumpForce * 2f, ForceMode.Impulse);
+        rb.AddForce(Vector3.up * JumpForce * 1.5f, ForceMode.Impulse);
     }
 
     void handleWallJump()
@@ -253,11 +282,6 @@ public class PlayerMovement : MonoBehaviour
         //     return;
         // }
 
-        if (other.collider.CompareTag("Anti-RunZone"))
-        {
-            InRunZone = true;
-            Debug.Log("[STATE] Entered RunZone");
-        }
     }
 
     void OnCollisionExit(Collision other)
@@ -269,17 +293,10 @@ public class PlayerMovement : MonoBehaviour
         //     isGrounded = false;
         //     Debug.Log("[STATE] Grounded = FALSE");
         // }
-
-        if (other.collider.CompareTag("Anti-RunZone"))
-        {
-            InRunZone = false;
-            Debug.Log("[STATE] Exited RunZone");
-        }
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (isDashing) return;
         Debug.Log("[TRIGGER ENTER] Hit: " + other.tag);
 
         if (other.CompareTag("LowObj"))
@@ -291,13 +308,35 @@ public class PlayerMovement : MonoBehaviour
 
             CanSlide = true;
         }
+
+        if (other.CompareTag("Anti-RunZone"))
+        {
+            InRunZone = true;
+            Debug.Log("[STATE] Entered RunZone");
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Anti-RunZone"))
+        {
+            InRunZone = false;
+            Debug.Log("[STATE] Exited RunZone");
+        }
     }
 
     void OnCollisionStay(Collision other)
     {
         if (other.collider.CompareTag("Ground"))
         {
+            isGrounded = true;
+            Debug.Log("[STATE] Grounded = TRUE");
+            
             groundNormal = other.GetContact(0).normal;
+            
+            Vector3 e = transform.eulerAngles;
+            transform.rotation = Quaternion.Euler(0f, e.y, 0f);
+            return;
         }
 
         if (other.collider.CompareTag("ReboundWall") && !isGrounded)
@@ -387,7 +426,6 @@ public class PlayerMovement : MonoBehaviour
 
     IEnumerator SlideRoutine()
     {
-        if (isDashing) yield break;
         Debug.Log("[SLIDE] SlideRoutine started");
 
         isSliding = true;
@@ -408,7 +446,6 @@ public class PlayerMovement : MonoBehaviour
 
     IEnumerator runQTE(float duration)
     {
-        if (isDashing) yield break;
         Debug.Log("[QTE] QTE started");
 
         originalSpeed = MoveSpeed;
@@ -434,7 +471,7 @@ public class PlayerMovement : MonoBehaviour
 
                 MoveSpeed = originalSpeed;
 
-                StartCoroutine(SlideRoutine());
+                PendingSlide = true;
                 yield break;
             }
 
@@ -501,15 +538,21 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        print(this.transform.position.y);
+
         GroundCheck();
         CheckDashInput();
         MovePlayer();
-        if (!IsRotating && isGrounded && !CanSlide && !isSliding)
+
+        if (!IsRotating && isGrounded && !CanSlide)
             RotatePlayer();
 
         Jumping();
         ResetCam();
         handleWallJump();
+        if (PendingSlide && isGrounded)
+        {
+            PendingSlide = false;
+            StartCoroutine(SlideRoutine());
+        }
     }
 }

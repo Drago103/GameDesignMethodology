@@ -140,7 +140,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""Dash"",
                     ""type"": ""Button"",
-                    ""id"": ""9ae86732-3287-4e93-9ad1-06ae1293d0a8"",
+                    ""id"": ""723428ef-718e-48bc-87dd-e91daf3dfcce"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -149,8 +149,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""Look"",
                     ""type"": ""Value"",
-                    ""id"": ""965d1c2c-2493-4b7e-9837-494334ca3f0f"",
-                    ""expectedControlType"": """",
+                    ""id"": ""78b15173-58da-4eb4-aeb9-8103f050acba"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -258,7 +258,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""00d25192-3c1b-4d10-be54-b5928e435abd"",
+                    ""id"": ""0d7478f5-b9f5-4ca4-856c-cd9be8a9e7f0"",
                     ""path"": ""<Keyboard>/f"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -269,7 +269,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""d4dea217-4673-460a-9690-ef613dca0cb1"",
+                    ""id"": ""073c0afc-f017-49c4-8776-33f924c8c241"",
                     ""path"": ""<Mouse>/delta"",
                     ""interactions"": """",
                     ""processors"": """",
