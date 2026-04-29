@@ -33,6 +33,11 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] float slidingDownWallSpeed;
 
+    [SerializeField] float dashVelocity = 20f;
+    [SerializeField] float dashDuration = 0.2f;
+    [SerializeField] float dashCooldown = 1f;
+    private Vector3 groundNormal = Vector3.up;
+
     [SerializeField] Transform model;
 
     private bool isGrounded;
@@ -46,6 +51,10 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsQTE = false;
 
+    private bool isDashing = false;
+
+    private float lastDashTime = -Mathf.Infinity;
+
     private float currentYRotation;
 
     private Coroutine wallSlideRoutine;
@@ -54,6 +63,11 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] Rigidbody rb;
 
+    float groundCheckRadius = 0.3f;
+    float groundCheckDistance = 0.6f;
+    [SerializeField] LayerMask groundLayer;
+    float groundedCoyoteTime = 0.12f;
+    float lastGroundedTime;
     void Awake()
     {
         Debug.Log("[INIT] Awake called");
@@ -110,47 +124,49 @@ public class PlayerMovement : MonoBehaviour
 
     void MovePlayer()
     {
-        // if (OnWall)
-        // {
-        //     Debug.Log("[MOVE] Blocked: OnWall");
-        //     return;
-        // }
-
-        // if (wallJumping)
-        // {
-        //     Debug.Log("[MOVE] Blocked: wallJumping");
-        //     return;
-        // }
-        // {
-        //     Debug.Log("[MOVE] Movement blocked (OnWall or wallJumping)");
-        //     return;
-        // }
-
-        if(!isGrounded) return;
+        if (isDashing) return;
+        if (!isGrounded) return;
 
         Debug.Log($"[Move] Unblocked OnWall is {OnWall}");
         Debug.Log($"[Move] Unblocked wallJumping is {wallJumping}");
 
         DetermineForwardMovement();
 
-        Vector3 Move = new Vector3(0f, 0f, ForwardMovement);
+        Vector3 Move = new Vector3(moveInput.x, 0f, ForwardMovement);
         Vector3 worldMove = transform.TransformDirection(Move) * MoveSpeed;
+        Vector3 slopeMove = Vector3.ProjectOnPlane(worldMove, groundNormal).normalized * MoveSpeed;
 
-        rb.linearVelocity = new Vector3(worldMove.x, rb.linearVelocity.y, worldMove.z);
+        rb.linearVelocity = new Vector3(
+            slopeMove.x,
+            rb.linearVelocity.y,
+            slopeMove.z
+        );
 
         Debug.Log("[MOVE] Velocity set to: " + rb.linearVelocity);
     }
 
+    void CheckDashInput()
+    {
+        if (controls.Player.Dash.triggered && !isDashing && Time.time >= lastDashTime + dashCooldown && !OnWall &&
+            !wallJumping)
+        {
+            Debug.Log("Dash is triggered");
+            lastDashTime = Time.time;
+            StartCoroutine(DashRoutine());
+        }
+    }
+
     void RotatePlayer()
     {
-        currentYRotation += moveInput.x;
-        rb.MoveRotation(Quaternion.Euler(0f, currentYRotation, 0f));
+        Vector2 look = controls.Player.Look.ReadValue<Vector2>();
+        currentYRotation += look.x;
 
-        Debug.Log("[ROTATE] Rotating to Y: " + currentYRotation);
+        rb.MoveRotation(Quaternion.Euler(0f, currentYRotation, 0f));
 
         if (!IsRotating)
             headTarget.rotation = transform.rotation;
     }
+
 
     void Jumping()
     {
@@ -227,15 +243,15 @@ public class PlayerMovement : MonoBehaviour
     {
         Debug.Log("[COLLISION ENTER] Hit: " + other.collider.tag);
 
-        if (other.collider.CompareTag("Ground"))
-        {
-            isGrounded = true;
-            Debug.Log("[STATE] Grounded = TRUE");
-
-            Vector3 e = transform.eulerAngles;
-            transform.rotation = Quaternion.Euler(0f, e.y, 0f);
-            return;
-        }
+        // if (other.collider.CompareTag("Ground"))
+        // {
+        //     isGrounded = true;
+        //     Debug.Log("[STATE] Grounded = TRUE");
+        //
+        //     Vector3 e = transform.eulerAngles;
+        //     transform.rotation = Quaternion.Euler(0f, e.y, 0f);
+        //     return;
+        // }
 
         if (other.collider.CompareTag("Anti-RunZone"))
         {
@@ -248,11 +264,11 @@ public class PlayerMovement : MonoBehaviour
     {
         Debug.Log("[COLLISION EXIT] Left: " + other.collider.tag);
 
-        if (other.collider.CompareTag("Ground"))
-        {
-            isGrounded = false;
-            Debug.Log("[STATE] Grounded = FALSE");
-        }
+        // if (other.collider.CompareTag("Ground"))
+        // {
+        //     isGrounded = false;
+        //     Debug.Log("[STATE] Grounded = FALSE");
+        // }
 
         if (other.collider.CompareTag("Anti-RunZone"))
         {
@@ -263,6 +279,7 @@ public class PlayerMovement : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        if (isDashing) return;
         Debug.Log("[TRIGGER ENTER] Hit: " + other.tag);
 
         if (other.CompareTag("LowObj"))
@@ -273,11 +290,16 @@ public class PlayerMovement : MonoBehaviour
             qteRoutine = StartCoroutine(runQTE(maxDuration));
 
             CanSlide = true;
-        }   
+        }
     }
 
     void OnCollisionStay(Collision other)
     {
+        if (other.collider.CompareTag("Ground"))
+        {
+            groundNormal = other.GetContact(0).normal;
+        }
+
         if (other.collider.CompareTag("ReboundWall") && !isGrounded)
         {
             Debug.Log("[WALL] Staying on ReboundWall");
@@ -365,6 +387,7 @@ public class PlayerMovement : MonoBehaviour
 
     IEnumerator SlideRoutine()
     {
+        if (isDashing) yield break;
         Debug.Log("[SLIDE] SlideRoutine started");
 
         isSliding = true;
@@ -385,6 +408,7 @@ public class PlayerMovement : MonoBehaviour
 
     IEnumerator runQTE(float duration)
     {
+        if (isDashing) yield break;
         Debug.Log("[QTE] QTE started");
 
         originalSpeed = MoveSpeed;
@@ -427,11 +451,61 @@ public class PlayerMovement : MonoBehaviour
         MoveSpeed = originalSpeed;
     }
 
+    IEnumerator DashRoutine()
+    {
+        isDashing = true;
+
+        Vector3 dashDirection = headTarget.forward;
+        dashDirection.y = 0f;
+        dashDirection.Normalize();
+
+        rb.linearVelocity = new Vector3(
+            dashDirection.x * dashVelocity,
+            rb.linearVelocity.y,
+            dashDirection.z * dashVelocity
+        );
+
+        yield return new WaitForSeconds(dashDuration);
+
+        // Restore normal running speed
+        rb.linearVelocity = new Vector3(
+            dashDirection.x * MoveSpeed,
+            rb.linearVelocity.y,
+            dashDirection.z * MoveSpeed
+        );
+
+        isDashing = false;
+        Debug.Log("Dash is complete");
+    }
+
+    void GroundCheck()
+    {
+        Vector3 origin = transform.position + Vector3.up * 0.1f;
+
+        if (Physics.SphereCast(origin, groundCheckRadius, Vector3.down,
+                out RaycastHit hit, groundCheckDistance, groundLayer))
+        {
+            isGrounded = true;
+            lastGroundedTime = Time.time;
+
+            // 仍然记录地面法线，用于斜坡移动
+            groundNormal = hit.normal;
+        }
+        else
+        {
+            // 给一个很短的容错窗口，斜坡过渡不会断
+            isGrounded = (Time.time - lastGroundedTime) <= groundedCoyoteTime;
+        }
+    }
+
+
     void Update()
     {
+        print(this.transform.position.y);
+        GroundCheck();
+        CheckDashInput();
         MovePlayer();
-
-        if (!IsRotating && isGrounded && !CanSlide)
+        if (!IsRotating && isGrounded && !CanSlide && !isSliding)
             RotatePlayer();
 
         Jumping();

@@ -19,7 +19,7 @@ public class Portal : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            other.transform.position = new Vector3(destination.transform.position.x, other.transform.position.y, destination.transform.position.z);
+            other.transform.position = new Vector3(destination.transform.position.x, destination.transform.position.y, destination.transform.position.z);
         }
     }
 }
