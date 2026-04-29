@@ -5,7 +5,10 @@ public class LaunchPad : MonoBehaviour
 {
     public float upForce = 20f;
     public float forwardForce = 10f;
-    public float freezeTime = 0.2f;
+    public float stunTime = 1f;
+
+    public Transform head;
+    public float dipAmount = 15f;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -14,17 +17,40 @@ public class LaunchPad : MonoBehaviour
         Rigidbody rb = other.attachedRigidbody;
         if (rb == null) return;
 
-        StartCoroutine(Launch(rb));
+        PlayerMovement pm = other.GetComponent<PlayerMovement>();
+        if (pm == null) return;
+
+        StartCoroutine(StunAndLaunch(rb, pm));
     }
 
-    private IEnumerator Launch(Rigidbody rb)
+    private IEnumerator StunAndLaunch(Rigidbody rb, PlayerMovement pm)
     {
-        rb.linearVelocity = Vector3.zero;
-        rb.isKinematic = true;
+        pm.movementLocked = true;
+        rb.linearVelocity *= 0.2f;
+        StartCoroutine(HeadDip());
 
-        yield return new WaitForSeconds(freezeTime);
+        yield return new WaitForSeconds(stunTime);
 
-        rb.isKinematic = false;
         rb.linearVelocity = Vector3.up * upForce + transform.forward * forwardForce;
+
+        pm.movementLocked = false;
+    }
+
+    private IEnumerator HeadDip()
+    {
+        float t = 0f;
+        float duration = stunTime * 0.8f;
+
+        Quaternion startRot = head.localRotation;
+        Quaternion dippedRot = startRot * Quaternion.Euler(dipAmount, 0, 0);
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            head.localRotation = Quaternion.Lerp(startRot, dippedRot, t / duration);
+            yield return null;
+        }
+
+        head.localRotation = startRot;
     }
 }
