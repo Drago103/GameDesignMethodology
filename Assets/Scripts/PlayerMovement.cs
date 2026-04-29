@@ -7,7 +7,6 @@ public class PlayerMovement : MonoBehaviour
 
     private PlayerControls controls;
     private float ForwardMovement;
-
     private float originalSpeed;
 
     float wallReattachDelay = 0.2f;
@@ -24,6 +23,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] GameObject QTEObj;
 
     [SerializeField] float MoveSpeed;
+    public float moveSpeed
+    {
+        get => MoveSpeed;
+        set => MoveSpeed = value;
+    }
+    public bool movementLocked = false;
+
     [SerializeField] float JumpForce;
     [SerializeField] float reboundForce;
     [SerializeField] float slideVel;
@@ -36,7 +42,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] Transform model;
 
     private bool isGrounded;
-    private bool InRunZone;
+    public bool InRunZone;
+
     private bool CanSlide;
     private bool IsRotating = false;
     private bool isSliding = false;
@@ -99,10 +106,14 @@ public class PlayerMovement : MonoBehaviour
     {
         float old = ForwardMovement;
 
-        if (!InRunZone)
-            ForwardMovement = 1f;
+        if (!movementLocked)
+            if (!InRunZone)
+                ForwardMovement = 1f;
+            
+            else
+                ForwardMovement = moveInput.z;
         else
-            ForwardMovement = moveInput.z;
+            ForwardMovement = 0f;
 
         if (old != ForwardMovement)
             Debug.Log("[MOVE] ForwardMovement changed: " + ForwardMovement);
