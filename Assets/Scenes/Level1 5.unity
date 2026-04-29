@@ -3808,6 +3808,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 797958872067024483, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
+      propertyPath: m_Interpolate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 797958872067024483, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1766340295715412502, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
       propertyPath: m_Name
       value: Player
