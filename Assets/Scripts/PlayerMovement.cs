@@ -39,6 +39,10 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] float slidingDownWallSpeed;
 
+    [SerializeField] float dashVelocity = 20f;
+    [SerializeField] float dashDuration = 0.2f;
+    [SerializeField] float dashCooldown = 1f;
+
     [SerializeField] Transform model;
 
     private bool isGrounded;
@@ -49,9 +53,14 @@ public class PlayerMovement : MonoBehaviour
     private bool isSliding = false;
     private bool OnWall = false;
 
+    private bool PendingSlide = false;
+
     bool wallJumping = false;
 
     private bool IsQTE = false;
+    private bool isDashing = false;
+
+    private float lastDashTime = -Mathf.Infinity;
 
     private float currentYRotation;
 
@@ -136,7 +145,7 @@ public class PlayerMovement : MonoBehaviour
         //     Debug.Log("[MOVE] Movement blocked (OnWall or wallJumping)");
         //     return;
         // }
-
+        if (isDashing) return;
         if(!isGrounded) return;
 
         Debug.Log($"[Move] Unblocked OnWall is {OnWall}");
@@ -144,7 +153,8 @@ public class PlayerMovement : MonoBehaviour
 
         DetermineForwardMovement();
 
-        Vector3 Move = new Vector3(0f, 0f, ForwardMovement);
+       
+        Vector3 Move = new Vector3(moveInput.x, 0f, ForwardMovement);
         Vector3 worldMove = transform.TransformDirection(Move) * MoveSpeed;
 
         rb.linearVelocity = new Vector3(worldMove.x, rb.linearVelocity.y, worldMove.z);
@@ -152,12 +162,22 @@ public class PlayerMovement : MonoBehaviour
         Debug.Log("[MOVE] Velocity set to: " + rb.linearVelocity);
     }
 
+    void CheckDashInput()
+    {
+        if (controls.Player.Dash.triggered && !isDashing && Time.time >= lastDashTime + dashCooldown && !OnWall && !wallJumping)
+        {
+            Debug.Log("Dash is triggered");
+            lastDashTime = Time.time;
+            StartCoroutine(DashRoutine());
+        }
+    }
+
     void RotatePlayer()
     {
-        currentYRotation += moveInput.x;
-        rb.MoveRotation(Quaternion.Euler(0f, currentYRotation, 0f));
+        Vector2 look = controls.Player.Look.ReadValue<Vector2>();
+        currentYRotation += look.x;
 
-        Debug.Log("[ROTATE] Rotating to Y: " + currentYRotation);
+        rb.MoveRotation(Quaternion.Euler(0f, currentYRotation, 0f));
 
         if (!IsRotating)
             headTarget.rotation = transform.rotation;
@@ -190,7 +210,7 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = Vector3.zero;
 
         rb.AddForce(wallNormal.normalized * JumpForce * 1.5f, ForceMode.Impulse);
-        rb.AddForce(Vector3.up * JumpForce * 2f, ForceMode.Impulse);
+        rb.AddForce(Vector3.up * JumpForce * 1.5f, ForceMode.Impulse);
     }
 
     void handleWallJump()
@@ -248,11 +268,6 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if (other.collider.CompareTag("Anti-RunZone"))
-        {
-            InRunZone = true;
-            Debug.Log("[STATE] Entered RunZone");
-        }
     }
 
     void OnCollisionExit(Collision other)
@@ -263,12 +278,6 @@ public class PlayerMovement : MonoBehaviour
         {
             isGrounded = false;
             Debug.Log("[STATE] Grounded = FALSE");
-        }
-
-        if (other.collider.CompareTag("Anti-RunZone"))
-        {
-            InRunZone = false;
-            Debug.Log("[STATE] Exited RunZone");
         }
     }
 
@@ -285,10 +294,35 @@ public class PlayerMovement : MonoBehaviour
 
             CanSlide = true;
         }   
+
+        if (other.CompareTag("Anti-RunZone"))
+        {
+            InRunZone = true;
+            Debug.Log("[STATE] Entered RunZone");
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Anti-RunZone"))
+        {
+            InRunZone = false;
+            Debug.Log("[STATE] Exited RunZone");
+        }
     }
 
     void OnCollisionStay(Collision other)
     {
+        if (other.collider.CompareTag("Ground"))
+        {
+            isGrounded = true;
+            Debug.Log("[STATE] Grounded = TRUE");
+
+            Vector3 e = transform.eulerAngles;
+            transform.rotation = Quaternion.Euler(0f, e.y, 0f);
+            return;
+        }
+
         if (other.collider.CompareTag("ReboundWall") && !isGrounded)
         {
             Debug.Log("[WALL] Staying on ReboundWall");
@@ -421,7 +455,7 @@ public class PlayerMovement : MonoBehaviour
 
                 MoveSpeed = originalSpeed;
 
-                StartCoroutine(SlideRoutine());
+                PendingSlide = true;
                 yield break;
             }
 
@@ -438,15 +472,46 @@ public class PlayerMovement : MonoBehaviour
         MoveSpeed = originalSpeed;
     }
 
+    IEnumerator DashRoutine()
+    {
+        isDashing = true;
+
+        Vector3 dashDirection = headTarget.forward;
+        dashDirection.y = 0f;
+        dashDirection.Normalize();
+
+        rb.linearVelocity = new Vector3(
+            dashDirection.x * dashVelocity,
+            rb.linearVelocity.y,
+            dashDirection.z * dashVelocity
+        );
+
+        yield return new WaitForSeconds(dashDuration);
+
+        // Restore normal running speed
+        rb.linearVelocity = new Vector3(
+            dashDirection.x * MoveSpeed,
+            rb.linearVelocity.y,
+            dashDirection.z * MoveSpeed
+        );
+
+        isDashing = false;
+        Debug.Log("Dash is complete");
+    }
+
     void Update()
     {
+        CheckDashInput();
         MovePlayer();
-
-        if (!IsRotating && isGrounded && !CanSlide)
+        if (!IsRotating && isGrounded && !isSliding)
             RotatePlayer();
-
         Jumping();
         ResetCam();
         handleWallJump();
+        if (PendingSlide && isGrounded)
+        {
+            PendingSlide = false;
+            StartCoroutine(SlideRoutine());
+        }
     }
 }

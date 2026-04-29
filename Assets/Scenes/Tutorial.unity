@@ -959,6 +959,8 @@ MonoBehaviour:
   slideVel: 0
   slideDuration: 0
   slowDownFactor: 0
+  slidingDownWallSpeed: 0
+  model: {fileID: 0}
   maxDuration: 0
   rb: {fileID: 1603020797}
 --- !u!114 &1603020803
@@ -1332,6 +1334,10 @@ PrefabInstance:
     - target: {fileID: 2517074362462680987, guid: 6c831c4e27214be458e6fad9a19d5a11, type: 3}
       propertyPath: m_Name
       value: GameoverBox
+      objectReference: {fileID: 0}
+    - target: {fileID: 2517074362462680987, guid: 6c831c4e27214be458e6fad9a19d5a11, type: 3}
+      propertyPath: m_TagString
+      value: Gameover
       objectReference: {fileID: 0}
     - target: {fileID: 6220685726384898422, guid: 6c831c4e27214be458e6fad9a19d5a11, type: 3}
       propertyPath: m_LocalPosition.x
