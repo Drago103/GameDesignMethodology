@@ -351,7 +351,7 @@ GameObject:
   - component: {fileID: 407565652}
   - component: {fileID: 407565651}
   - component: {fileID: 407565650}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Ground
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -971,7 +971,7 @@ MonoBehaviour:
   rb: {fileID: 1603020797}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
 --- !u!114 &1603020803
 MonoBehaviour:
   m_ObjectHideFlags: 0
