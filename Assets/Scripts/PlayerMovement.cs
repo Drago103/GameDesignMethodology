@@ -327,17 +327,17 @@ public class PlayerMovement : MonoBehaviour
 
     void OnCollisionStay(Collision other)
     {
-        if (other.collider.CompareTag("Ground"))
-        {
-            isGrounded = true;
-            Debug.Log("[STATE] Grounded = TRUE");
+        // if (other.collider.CompareTag("Ground"))
+        // {
+        //     isGrounded = true;
+        //     Debug.Log("[STATE] Grounded = TRUE");
             
-            groundNormal = other.GetContact(0).normal;
+        //     groundNormal = other.GetContact(0).normal;
             
-            Vector3 e = transform.eulerAngles;
-            transform.rotation = Quaternion.Euler(0f, e.y, 0f);
-            return;
-        }
+        //     Vector3 e = transform.eulerAngles;
+        //     transform.rotation = Quaternion.Euler(0f, e.y, 0f);
+        //     return;
+        // }
 
         if (other.collider.CompareTag("ReboundWall") && !isGrounded)
         {

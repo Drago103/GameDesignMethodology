@@ -738,12 +738,17 @@ CapsuleCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 1.0192548
   m_Height: 2.2332003
   m_Direction: 1
   m_Center: {x: -0.5192548, y: 0.62, z: 0}
+--- !u!4 &162413592 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4094293969452445971, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
+  m_PrefabInstance: {fileID: 2041060986}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &165345462 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5414885690575732996, guid: 6e4b90aa6e7ce6c48abaf19370796573, type: 3}
@@ -4735,7 +4740,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &840182805
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10883,8 +10888,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2894157601416366663, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3663652090126312773, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
+      propertyPath: model
+      value: 
+      objectReference: {fileID: 162413592}
     - target: {fileID: 3663652090126312773, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
       propertyPath: QTEObj
       value: 
@@ -10927,7 +10936,7 @@ PrefabInstance:
       objectReference: {fileID: 1682934482}
     - target: {fileID: 3663652090126312773, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
       propertyPath: groundLayer.m_Bits
-      value: 8
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4094293969452445971, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
       propertyPath: m_LocalPosition.x
