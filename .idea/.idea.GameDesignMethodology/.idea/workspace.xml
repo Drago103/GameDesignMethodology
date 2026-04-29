@@ -9,8 +9,11 @@
   <component name="ChangeListManager">
     <list default="true" id="41aff3d1-476c-425d-a6a2-caa876c1f8eb" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/workspace.xml" afterDir="false" />
+<<<<<<< Updated upstream
       <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Bangers SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Bangers SDF.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Electronic Highway Sign SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Electronic Highway Sign SDF.asset" afterDir="false" />
+=======
+>>>>>>> Stashed changes
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,7 +77,11 @@
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+<<<<<<< Updated upstream
     &quot;git-widget-placeholder&quot;: &quot;Level3&quot;,
+=======
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+>>>>>>> Stashed changes
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -150,6 +157,12 @@
       <workItem from="1776508190689" duration="883000" />
       <workItem from="1776856094003" duration="5833000" />
       <workItem from="1776908883907" duration="9377000" />
+<<<<<<< Updated upstream
+=======
+      <workItem from="1777376810827" duration="4881000" />
+      <workItem from="1777387009264" duration="930000" />
+      <workItem from="1777387972739" duration="995000" />
+>>>>>>> Stashed changes
     </task>
     <servers />
   </component>
