@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 0
   m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0, g: 0, b: 0, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: eac2ef371405749e0bd050b4c3272f16, type: 2}
+  m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -1798,6 +1798,60 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c755ad488bbe6d4198802922fdcf013, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerReboundWall
+--- !u!114 &630105099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 630105093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d3e61af64c61e849be030e198e199f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Dash
+  movement: {fileID: 630105101}
+  dashVelocity: 50
+  dashDuration: 0.2
+  dashCooldown: 1
+  rb: {fileID: 630105100}
+  headTarget: {fileID: 1459608887}
+--- !u!54 &630105100 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 797958872067024483, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
+  m_PrefabInstance: {fileID: 2041060986}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &630105101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 630105093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e8fd511a892ae74da6659e3eb1ab7e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Movement
+  quickTimeEvent: {fileID: 1682934482}
+  dash: {fileID: 630105099}
+  headTarget: {fileID: 1459608887}
+  QTEObj: {fileID: 1999006310}
+  MoveSpeed: 12
+  movementLocked: 0
+  JumpForce: 9
+  reboundForce: 8
+  slideVel: 15
+  slideDuration: 1
+  slowDownFactor: 0.03
+  slidingDownWallSpeed: 3
+  model: {fileID: 630105096}
+  InRunZone: 0
+  maxDuration: 2
+  rb: {fileID: 630105100}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 40
 --- !u!1001 &640365786
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7513,7 +7567,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3663652090126312773, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -7526,6 +7581,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1766340295715412502, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
       insertIndex: -1
       addedObject: {fileID: 630105097}
+    - targetCorrespondingSourceObject: {fileID: 1766340295715412502, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 630105101}
+    - targetCorrespondingSourceObject: {fileID: 1766340295715412502, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 630105099}
   m_SourcePrefab: {fileID: 100100000, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
 --- !u!1001 &2050039121
 PrefabInstance:
