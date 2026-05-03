@@ -3,27 +3,23 @@ using System.Collections;
 
 public class Movement : MonoBehaviour
 {
-    public QuickTimeEvent quickTimeEvent;
-
+  
     public Dash dash;
+
+    public Sliding slide;
+
+    public WallRebound wallRebound;
 
     private PlayerControls controls;
     private float ForwardMovement;
 
-    private float originalSpeed;
-
-    float wallReattachDelay = 0.2f;
-    float lastWallJumpTime = -10f;
-
     private Vector3 moveInput;
-    private Vector3 normalScale = new Vector3(1f, 1f, 1f);
-    private Vector3 slideScale = new Vector3(1f, 0.3f, 1f);
 
     private Vector3 wallNormal;
-    private Coroutine qteRoutine;
+
+    public Vector3 WallNormal => wallNormal;
 
     [SerializeField] Transform headTarget;
-    [SerializeField] GameObject QTEObj;
 
     [SerializeField] float MoveSpeed;
     public float moveSpeed
@@ -34,39 +30,23 @@ public class Movement : MonoBehaviour
     public bool movementLocked = false;
 
     [SerializeField] float JumpForce;
-    [SerializeField] float reboundForce;
-    [SerializeField] float slideVel;
-    [SerializeField] float slideDuration;
 
-    [SerializeField] float slowDownFactor;
-
-    [SerializeField] float slidingDownWallSpeed;
+    public float jumpforce => JumpForce;
 
     private Vector3 groundNormal = Vector3.up;
 
     [SerializeField] Transform model;
 
     private bool isGrounded;
+
+    public bool IsGrounded => isGrounded;
     public bool InRunZone;
-
-    private bool CanSlide;
-    private bool IsRotating = false;
-    private bool isSliding = false;
-    private bool OnWall = false;
-    public bool onwall => OnWall;
-
-    private bool PendingSlide = false;
-
-    private bool wallJumping = false;
-    public bool Walljumping => wallJumping;
-
-    private bool IsQTE = false;
-
     private float currentYRotation;
 
-    private Coroutine wallSlideRoutine;
-
-    [SerializeField] float maxDuration;
+    public float CurrentYPos{
+        get => currentYRotation;
+        set => currentYRotation = value;
+    }
 
     [SerializeField] Rigidbody rb;
 
@@ -97,7 +77,6 @@ public class Movement : MonoBehaviour
             Debug.Log("[INPUT] Move Canceled");
         };
 
-        quickTimeEvent.SetMaxDuration(maxDuration);
         ForwardMovement = 1f;
 
         currentYRotation = transform.eulerAngles.y;
@@ -138,8 +117,8 @@ public class Movement : MonoBehaviour
         if(dash!=null && dash.IsDashing) return;
         if (!isGrounded) return;
 
-        Debug.Log($"[Move] Unblocked OnWall is {OnWall}");
-        Debug.Log($"[Move] Unblocked wallJumping is {wallJumping}");
+        Debug.Log($"[Move] Unblocked OnWall is {wallRebound.onwall}");
+        Debug.Log($"[Move] Unblocked wallJumping is {wallRebound.Walljumping}");    
 
         DetermineForwardMovement();
 
@@ -163,7 +142,7 @@ public class Movement : MonoBehaviour
 
         rb.MoveRotation(Quaternion.Euler(0f, currentYRotation, 0f));
 
-        if (!IsRotating)
+        if (!wallRebound.isRotating)
             headTarget.rotation = transform.rotation;
     }
 
@@ -185,59 +164,6 @@ public class Movement : MonoBehaviour
         }
     }
 
-    void WallJump()
-    {
-        Debug.Log("[WALL] WallJump executed");
-
-        lastWallJumpTime = Time.time;
-
-        rb.linearVelocity = Vector3.zero;
-
-        rb.AddForce(wallNormal.normalized * JumpForce * 1.5f, ForceMode.Impulse);
-        rb.AddForce(Vector3.up * JumpForce * 1.5f, ForceMode.Impulse);
-    }
-
-    void handleWallJump()
-    {
-        if (!OnWall || IsRotating || wallJumping)
-            return;
-
-        if (controls.Player.Jump.triggered)
-        {
-            Debug.Log("[WALL] Wall jump input detected");
-
-            if (wallSlideRoutine != null)
-            {
-                Debug.Log("[WALL] Stopping wall slide routine");
-                StopCoroutine(wallSlideRoutine);
-            }
-
-            wallJumping = true;
-            OnWall = false;
-
-            WallJump();
-            StartCoroutine(UnlockWallJump());
-        }
-    }
-
-    void ReboundWall()
-    {
-        if (!OnWall)
-        {
-            Debug.Log("[WALL] ReboundWall triggered");
-
-            OnWall = true;
-
-            if (!IsRotating)
-            {
-                Debug.Log("[WALL] Starting WallRotate");
-                StartCoroutine(WallRotate(0.25f));
-            }
-
-            wallSlideRoutine = StartCoroutine(WallSliding());
-        }
-    }
-
     void OnCollisionEnter(Collision other)
     {
         Debug.Log("[COLLISION ENTER] Hit: " + other.collider.tag);
@@ -251,16 +177,6 @@ public class Movement : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         Debug.Log("[TRIGGER ENTER] Hit: " + other.tag);
-
-        if (other.CompareTag("LowObj"))
-        {
-            Debug.Log("[QTE] QTE Triggered");
-
-            QTEObj.SetActive(true);
-            qteRoutine = StartCoroutine(runQTE(maxDuration));
-
-            CanSlide = true;
-        }
 
         if (other.CompareTag("Anti-RunZone"))
         {
@@ -284,149 +200,20 @@ public class Movement : MonoBehaviour
         {
             Debug.Log("[WALL] Staying on ReboundWall");
 
-            if (Time.time < lastWallJumpTime + wallReattachDelay)
+            if (Time.time < wallRebound.LTWallJump + wallRebound.ReattachDelay)
             {
                 Debug.Log("[WALL] Ignoring wall (reattach delay)");
                 return;
             }
 
-            if (!OnWall)
+            if (!wallRebound.onwall)
             {
                 wallNormal = other.GetContact(0).normal;
                 Debug.Log("[WALL] Wall normal: " + wallNormal);
 
-                ReboundWall();
+                wallRebound.ReboundWall();
             }
         }
-    }
-
-    IEnumerator UnlockWallJump()
-    {
-        Debug.Log("[WALL] UnlockWallJump started");
-        yield return new WaitForSeconds(0.25f);
-        wallJumping = false;
-        Debug.Log("[WALL] WallJump unlocked");
-    }
-
-    IEnumerator WallSliding()
-    {
-        Debug.Log("[WALL] WallSliding started");
-
-        OnWall = true;
-
-        while (OnWall && !isGrounded)
-        {
-            Vector3 vel = rb.linearVelocity;
-
-            if (vel.y < -slidingDownWallSpeed)
-                vel.y = -slidingDownWallSpeed;
-
-            vel.x *= 0.1f;
-            vel.z *= 0.1f;
-
-            rb.linearVelocity = vel;
-
-            Debug.Log("[WALL] Sliding velocity: " + vel);
-
-            yield return null;
-        }
-
-        Debug.Log("[WALL] WallSliding ended");
-        OnWall = false;
-    }
-
-    IEnumerator WallRotate(float duration)
-    {
-        Debug.Log("[WALL] WallRotate started");
-
-        IsRotating = true;
-
-        float startY = currentYRotation;
-        float endY = currentYRotation + 180f;
-
-        float t = 0f;
-
-        while (t < 1f)
-        {
-            t += Time.deltaTime / duration;
-            currentYRotation = Mathf.Lerp(startY, endY, t);
-
-            transform.rotation = Quaternion.Euler(0f, currentYRotation, 0f);
-            headTarget.rotation = transform.rotation;
-
-            Debug.Log("[WALL] Rotating Y: " + currentYRotation);
-
-            yield return null;
-        }
-
-        Debug.Log("[WALL] WallRotate finished");
-
-        IsRotating = false;
-        wallJumping = false;
-    }
-
-    IEnumerator SlideRoutine()
-    {
-        Debug.Log("[SLIDE] SlideRoutine started");
-
-        isSliding = true;
-
-        model.localScale = slideScale;
-
-        rb.linearVelocity += transform.forward * slideVel;
-        Debug.Log("[SLIDE] Slide burst velocity: " + rb.linearVelocity);
-
-        yield return new WaitForSeconds(slideDuration);
-
-        model.localScale = normalScale;
-
-        isSliding = false;
-
-        Debug.Log("[SLIDE] SlideRoutine ended");
-    }
-
-    IEnumerator runQTE(float duration)
-    {
-        Debug.Log("[QTE] QTE started");
-
-        originalSpeed = MoveSpeed;
-        MoveSpeed *= slowDownFactor;
-
-        float timer = 0f;
-        quickTimeEvent.SetDuration(0f);
-
-        while (timer < duration)
-        {
-            timer += Time.deltaTime;
-            quickTimeEvent.SetDuration(timer);
-
-            if (controls.Player.Interact.triggered)
-            {
-                Debug.Log("[QTE] SUCCESS");
-
-                quickTimeEvent.ResetUI();
-                QTEObj.SetActive(false);
-
-                IsQTE = false;
-                CanSlide = false;
-
-                MoveSpeed = originalSpeed;
-
-                PendingSlide = true;
-                yield break;
-            }
-
-            yield return null;
-        }
-
-        Debug.Log("[QTE] FAILED");
-
-        quickTimeEvent.ResetUI();
-        QTEObj.SetActive(false);
-
-        IsQTE = false;
-        CanSlide = false;
-        MoveSpeed = originalSpeed;
     }
 
     void GroundCheck()
@@ -452,17 +239,14 @@ public class Movement : MonoBehaviour
         GroundCheck();
         dash.CheckDashInput(controls);
         MovePlayer();
-        if (!IsRotating && isGrounded && !CanSlide)
+        if (!wallRebound.isRotating && isGrounded && !slide.IsSliding)
             RotatePlayer();
 
         Jumping();
         ResetCam();
-        handleWallJump();
+        wallRebound.handleWallJump(controls);
+        slide.Slide(controls);
 
-        if (PendingSlide && isGrounded)
-        {
-            PendingSlide = false;
-            StartCoroutine(SlideRoutine());
-        }
+        
     }
 }

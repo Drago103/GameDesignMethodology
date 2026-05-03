@@ -459,7 +459,7 @@ public class PlayerMovement : MonoBehaviour
             timer += Time.deltaTime;
             quickTimeEvent.SetDuration(timer);
 
-            if (controls.Player.Interact.triggered)
+            if (controls.Player.Slide.triggered)
             {
                 Debug.Log("[QTE] SUCCESS");
 

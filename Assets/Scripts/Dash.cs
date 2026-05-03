@@ -7,6 +7,8 @@ public class Dash : MonoBehaviour
 
     [SerializeField] Movement movement;
 
+    [SerializeField] WallRebound wallRebound;
+
     [SerializeField] float dashVelocity = 20f;
     [SerializeField] float dashDuration = 0.2f;
     [SerializeField] float dashCooldown = 1f;
@@ -25,11 +27,14 @@ public class Dash : MonoBehaviour
     {
         if (movement == null)
             movement = GetComponent<Movement>();
+
+        if (wallRebound == null)
+            wallRebound = GetComponent<WallRebound>();
     }
 
     public void CheckDashInput(PlayerControls controls)
     {
-        if (controls.Player.Dash.triggered && !isDashing && Time.time >= lastDashTime + dashCooldown && !movement.Walljumping && !movement.onwall)
+        if (controls.Player.Dash.triggered && !isDashing && Time.time >= lastDashTime + dashCooldown && !wallRebound.Walljumping && !wallRebound.onwall)
         {
             Debug.Log("Dash is triggered");
             lastDashTime = Time.time;
