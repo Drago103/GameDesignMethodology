@@ -45,7 +45,7 @@
         bool CanStandUp()
         {
             // Cast upward from the player's position
-            float checkHeight = 1f; // height difference between slideScale and normalScale
+            float checkHeight = 2f; // height difference between slideScale and normalScale
             float radius = 0.4f;    // adjust to match your player width
 
             return !Physics.SphereCast(
@@ -81,7 +81,7 @@
 
             while (!CanStandUp())
             {
-                 rb.linearVelocity = transform.forward * slideVel * 0.5f;
+                rb.linearVelocity = transform.forward * slideVel * 0.5f;
                 yield return null;
             }
 

@@ -29,6 +29,8 @@ public class Movement : MonoBehaviour
     }
     public bool movementLocked = false;
 
+    [SerializeField] float mouseSensitivity = 150f;
+
     [SerializeField] float JumpForce;
 
     public float jumpforce => JumpForce;
@@ -41,6 +43,9 @@ public class Movement : MonoBehaviour
 
     public bool IsGrounded => isGrounded;
     public bool InRunZone;
+
+    private bool cameraLocked = true;
+
     private float currentYRotation;
 
     public float CurrentYPos{
@@ -137,8 +142,13 @@ public class Movement : MonoBehaviour
 
     void RotatePlayer()
     {
+        if (cameraLocked) return;
+        
         Vector2 look = controls.Player.Look.ReadValue<Vector2>();
-        currentYRotation += look.x;
+        
+        float yaw = look.x * mouseSensitivity * Time.deltaTime;
+
+        currentYRotation += yaw;
 
         rb.MoveRotation(Quaternion.Euler(0f, currentYRotation, 0f));
 
@@ -232,6 +242,12 @@ public class Movement : MonoBehaviour
         {
             isGrounded = (Time.time - lastGroundedTime) <= groundedCoyoteTime;
         }
+    }
+
+    IEnumerator Start()
+    {
+        yield return new WaitForSeconds(0.15f); // adjust as needed
+        cameraLocked = false;
     }
 
     void Update()

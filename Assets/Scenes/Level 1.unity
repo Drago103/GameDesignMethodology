@@ -1774,30 +1774,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4094293969452445971, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
   m_PrefabInstance: {fileID: 2041060986}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &630105097
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 630105093}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10a92e653d35b9243a85c781e19be81b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerQTE
---- !u!114 &630105098
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 630105093}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c755ad488bbe6d4198802922fdcf013, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerReboundWall
 --- !u!114 &630105099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1811,6 +1787,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dash
   movement: {fileID: 630105101}
+  wallRebound: {fileID: 630105105}
   dashVelocity: 50
   dashDuration: 0.2
   dashCooldown: 1
@@ -1833,25 +1810,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e8fd511a892ae74da6659e3eb1ab7e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Movement
-  quickTimeEvent: {fileID: 1682934482}
   dash: {fileID: 630105099}
+  slide: {fileID: 630105106}
+  wallRebound: {fileID: 630105105}
   headTarget: {fileID: 1459608887}
-  QTEObj: {fileID: 1999006310}
   MoveSpeed: 12
   movementLocked: 0
+  mouseSensitivity: 150
   JumpForce: 9
-  reboundForce: 8
-  slideVel: 15
-  slideDuration: 1
-  slowDownFactor: 0.03
-  slidingDownWallSpeed: 3
   model: {fileID: 630105096}
   InRunZone: 0
-  maxDuration: 2
   rb: {fileID: 630105100}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 40
+    m_Bits: 8
+--- !u!114 &630105105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 630105093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a5a8c7e587de974ab0740a0f1c93fd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WallRebound
+  movement: {fileID: 630105101}
+  headTarget: {fileID: 1459608887}
+  rb: {fileID: 630105100}
+  slidingDownWallSpeed: 5
+--- !u!114 &630105106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 630105093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8a314c5602c55d409a867131479980e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Sliding
+  movement: {fileID: 630105101}
+  wallRebound: {fileID: 630105105}
+  dash: {fileID: 630105099}
+  slideVel: 15
+  slideDuration: 0.5
+  rb: {fileID: 630105100}
+  headTarget: {fileID: 1459608887}
+  model: {fileID: 630105096}
 --- !u!1001 &640365786
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7577,16 +7585,16 @@ PrefabInstance:
       addedObject: {fileID: 630105095}
     - targetCorrespondingSourceObject: {fileID: 1766340295715412502, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 630105098}
-    - targetCorrespondingSourceObject: {fileID: 1766340295715412502, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 630105097}
-    - targetCorrespondingSourceObject: {fileID: 1766340295715412502, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 630105101}
     - targetCorrespondingSourceObject: {fileID: 1766340295715412502, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
       insertIndex: -1
       addedObject: {fileID: 630105099}
+    - targetCorrespondingSourceObject: {fileID: 1766340295715412502, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 630105105}
+    - targetCorrespondingSourceObject: {fileID: 1766340295715412502, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 630105106}
   m_SourcePrefab: {fileID: 100100000, guid: da7105d38a7deb045b505ae89c0d0675, type: 3}
 --- !u!1001 &2050039121
 PrefabInstance:
