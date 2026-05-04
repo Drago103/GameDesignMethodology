@@ -459,7 +459,7 @@ public class PlayerMovement : MonoBehaviour
             timer += Time.deltaTime;
             quickTimeEvent.SetDuration(timer);
 
-            if (controls.Player.Interact.triggered)
+            if (controls.Player.Slide.triggered)
             {
                 Debug.Log("[QTE] SUCCESS");
 
@@ -471,10 +471,10 @@ public class PlayerMovement : MonoBehaviour
 
                 MoveSpeed = originalSpeed;
 
-                PendingSlide = true;
                 yield break;
             }
 
+                PendingSlide = true;
             yield return null;
         }
 
@@ -538,7 +538,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-
         GroundCheck();
         CheckDashInput();
         MovePlayer();
