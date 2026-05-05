@@ -38,6 +38,13 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
     public Vector3 playerStartPosition = new Vector3(10f, 0.5f, 259f);
     public Vector3 playerStartRotation = new Vector3(0f, 90f, 0f);
 
+    [Header("Level End")]
+    public GameObject levelEndPrefab;
+    public Vector3 levelEndPosition = new Vector3(480f, 3f, 50f);
+    public Vector3 levelEndRotation = new Vector3(0f, 0f, 0f);
+    public Vector3 levelEndScale = new Vector3(3f, 3f, 3f);
+    public string nextLevelSceneName = "Level 4";
+    
     void Start()
     {
         GenerateMap();
@@ -64,6 +71,7 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
         GenerateTrees();
         GenerateRocks();
         GenerateDecorations();
+        GenerateLevelEnd();
 
         // Initial spawn attempt.
         PositionPlayer();
@@ -107,6 +115,13 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
     void GenerateWalls()
     {
         if (wallPrefab == null) return;
+        
+        //Start Back Wall
+        CreateWallChain(new Vector3[]
+        {
+            new Vector3(0, 0, 90),
+            new Vector3(0, 0, 115)
+        });
 
         // START CORRIDOR
         CreateWallChain(new Vector3[]
@@ -291,6 +306,11 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
                 Quaternion.Euler(0f, Random.Range(0f, 360f), 0f),
                 transform
             );
+            
+            if (rock.GetComponent<RockHazard>() == null)
+            {
+                rock.AddComponent<RockHazard>();
+            }
 
             float scale = Random.Range(0.8f, 2.2f) * levelScale * 0.6f;
             rock.transform.localScale = Vector3.one * scale;
@@ -373,6 +393,41 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
             wallHeight,
             length
         );
+    }
+    
+    void GenerateLevelEnd()
+    {
+        if (levelEndPrefab == null)
+        {
+            Debug.LogWarning("[LEVEL END] Level End Prefab is not assigned.");
+            return;
+        }
+
+        GameObject endObj = Instantiate(
+            levelEndPrefab,
+            levelEndPosition,
+            Quaternion.Euler(levelEndRotation),
+            transform
+        );
+
+        endObj.name = "LevelEndTrigger";
+        endObj.transform.localScale = levelEndScale;
+
+        Collider col = endObj.GetComponent<Collider>();
+        if (col == null)
+        {
+            col = endObj.AddComponent<SphereCollider>();
+        }
+
+        col.isTrigger = true;
+
+        Level3EndTrigger trigger = endObj.GetComponent<Level3EndTrigger>();
+        if (trigger == null)
+        {
+            trigger = endObj.AddComponent<Level3EndTrigger>();
+        }
+
+        trigger.nextLevelSceneName = nextLevelSceneName;
     }
 
     void PositionPlayer()
