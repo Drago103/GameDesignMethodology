@@ -8,15 +8,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="41aff3d1-476c-425d-a6a2-caa876c1f8eb" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/shelf/Uncommitted_changes_before_Checkout_at_16_04_2026_4_23_pm_[Changes]1/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/shelf/Uncommitted_changes_before_Checkout_at_16_04_2026_4_23_pm__Changes_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/shelf/Uncommitted_changes_before_Merge_at_16_04_2026_4_25_pm_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/shelf/Uncommitted_changes_before_Merge_at_16_04_2026_4_25_pm__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/shelf/Uncommitted_changes_before_Update_at_16_04_2026_5_48_pm_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/shelf/Uncommitted_changes_before_Update_at_16_04_2026_5_48_pm__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/shelf/Uncommitted_changes_before_Update_at_24_04_2026_12_14_pm_[Changes]1/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/shelf/Uncommitted_changes_before_Update_at_24_04_2026_12_14_pm__Changes_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/shelf/Uncommitted_changes_before_Update_at_27_04_2026_7_13_pm_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/shelf/Uncommitted_changes_before_Update_at_27_04_2026_7_13_pm__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Materials/ShieldMat.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Materials/ShieldMat.mat" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Level1 3.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Level1 3.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/URPProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/URPProjectSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Level3GeneratorScript.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Level3GeneratorScript.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +57,9 @@
     <urls />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="false" />
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4,
   &quot;fromUser&quot;: false
@@ -80,7 +82,8 @@
     "cidr.known.project.marker": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "Feature-ChasingLight",
+    "git-widget-placeholder": "Level3",
+    "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -157,6 +160,8 @@
       <workItem from="1776856094003" duration="5833000" />
       <workItem from="1776908883907" duration="9377000" />
       <workItem from="1777376810827" duration="4881000" />
+      <workItem from="1777946277490" duration="5169000" />
+      <workItem from="1777984056176" duration="597000" />
     </task>
     <servers />
   </component>
