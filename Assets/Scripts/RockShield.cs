@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class RockShield : MonoBehaviour
 {
@@ -21,13 +22,11 @@ public class RockShield : MonoBehaviour
 
     void Start()
     {
-        // Shield starts turned off
         if (shieldObject != null)
         {
             shieldObject.SetActive(false);
         }
 
-        // Bar starts full because shield is ready
         if (cooldownBar != null)
         {
             cooldownBar.minValue = 0f;
@@ -39,13 +38,14 @@ public class RockShield : MonoBehaviour
 
     void Update()
     {
-        // Activate shield only if it is not active and not cooling down
-        if (Input.GetKeyDown(KeyCode.T) && !shieldActive && !coolingDown)
+        if (Keyboard.current != null &&
+            Keyboard.current.tKey.wasPressedThisFrame &&
+            !shieldActive &&
+            !coolingDown)
         {
             ActivateShield();
         }
 
-        // While shield is active, drain the bar
         if (shieldActive)
         {
             shieldTimer -= Time.deltaTime;
@@ -62,8 +62,6 @@ public class RockShield : MonoBehaviour
                 DeactivateShield();
             }
         }
-
-        // After shield ends, refill the bar during cooldown
         else if (coolingDown)
         {
             cooldownTimer -= Time.deltaTime;
@@ -92,7 +90,6 @@ public class RockShield : MonoBehaviour
     {
         shieldActive = true;
         coolingDown = false;
-
         shieldTimer = shieldDuration;
 
         if (shieldObject != null)
@@ -110,7 +107,6 @@ public class RockShield : MonoBehaviour
     {
         shieldActive = false;
         coolingDown = true;
-
         cooldownTimer = cooldownDuration;
 
         if (shieldObject != null)

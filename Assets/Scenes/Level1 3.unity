@@ -433,7 +433,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_NormalColor: {r: 0, g: 0.5686275, b: 0.13725491, a: 1}
     m_HighlightedColor: {r: 0, g: 0.5687331, b: 0.13645567, a: 1}
     m_PressedColor: {r: 1, g: 0, b: 0, a: 1}
     m_SelectedColor: {r: 0, g: 0.056134224, b: 1, a: 1}
@@ -1148,7 +1148,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1760619353
 Transform:
   m_ObjectHideFlags: 0
@@ -1702,8 +1702,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RockShield
   shieldObject: {fileID: 1760619352}
-  shieldDuration: 3
-  cooldownDuration: 5
+  shieldDuration: 7
+  cooldownDuration: 10
   cooldownBar: {fileID: 394779393}
 --- !u!1001 &8996284547789425591
 PrefabInstance:
