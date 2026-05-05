@@ -68,6 +68,7 @@ public class Movement : MonoBehaviour
         controls = new PlayerControls();
 
         rb.constraints = RigidbodyConstraints.FreezeRotationX |
+                         RigidbodyConstraints.FreezeRotationY |
                          RigidbodyConstraints.FreezeRotationZ;
 
         controls.Player.Move.performed += ctx =>
@@ -177,11 +178,17 @@ public class Movement : MonoBehaviour
     void OnCollisionEnter(Collision other)
     {
         Debug.Log("[COLLISION ENTER] Hit: " + other.collider.tag);
+        if (other.collider.CompareTag("Wall"))
+        {
+            wallNormal = other.GetContact(0).normal;
+            rb.AddForce( wallNormal* 2f, ForceMode.Impulse);
+        }
     }
 
     void OnCollisionExit(Collision other)
     {
         Debug.Log("[COLLISION EXIT] Left: " + other.collider.tag);
+
     }
 
     void OnTriggerEnter(Collider other)
@@ -255,7 +262,7 @@ public class Movement : MonoBehaviour
         GroundCheck();
         dash.CheckDashInput(controls);
         MovePlayer();
-        if (!wallRebound.isRotating && isGrounded && !slide.IsSliding)
+        if (!wallRebound.isRotating && !slide.IsSliding)
             RotatePlayer();
 
         Jumping();

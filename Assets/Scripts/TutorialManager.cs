@@ -44,6 +44,8 @@ public class TutorialManager : MonoBehaviour
         foreach(MonoBehaviour script in Player.GetComponents<MonoBehaviour>())
         {
             script.enabled = true;
-        }   
+        }
+
+        gameObject.SetActive(false);   
     }
 }
