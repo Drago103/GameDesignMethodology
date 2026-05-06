@@ -9,9 +9,12 @@
   <component name="ChangeListManager">
     <list default="true" id="41aff3d1-476c-425d-a6a2-caa876c1f8eb" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Materials/ShieldMat.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Materials/ShieldMat.mat.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Materials/Spider.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Materials/Spider.mat.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Materials/dark.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Materials/dark.mat" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Level1 5.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Level1 5.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Dead.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Dead.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TimeSlowDown.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/TimeSlowDown.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,7 +30,7 @@
     </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="Level5" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -48,6 +51,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/InputSystems/PlayerControls.inputactions" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scenes/GameoverScene.unity" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Gameover.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Pause.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/QuickTimeEvent.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/UILoadScene.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.inputsystem@57d0e36f6123/InputSystem/Actions/InputAction.cs" root0="SKIP_HIGHLIGHTING" />
@@ -165,6 +169,7 @@
       <workItem from="1777906578676" duration="222000" />
       <workItem from="1777955671061" duration="4034000" />
       <workItem from="1777998925533" duration="7828000" />
+      <workItem from="1778042763528" duration="645000" />
     </task>
     <task id="LOCAL-00001" summary="pause UI and more changes on level 5">
       <option name="closed" value="true" />
