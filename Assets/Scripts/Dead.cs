@@ -35,5 +35,10 @@ public class Dead : MonoBehaviour
         {
             s.enabled = false;
         }
+        if (other.CompareTag("Gameover"))
+        {
+            Time.timeScale = 0;
+            gameoverCanvas.SetActive(true);
+        }
     }
 }
