@@ -113,7 +113,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
                     txtCD.text = "TIme Slow DOWN!";
                 }
 
-                txtCD.text = "CD" + Mathf.CeilToInt(_cooldownTimer).ToString();
+                txtCD.text = "CD:" + Mathf.CeilToInt(_cooldownTimer).ToString();
                 txtCD.gameObject.SetActive(true);
             }
             else
