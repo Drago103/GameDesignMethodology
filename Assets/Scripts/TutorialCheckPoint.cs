@@ -3,6 +3,7 @@ using UnityEngine;
 public class TutorialCheckPoint : MonoBehaviour
 {
   [SerializeField] GameObject TutorialManager;
+  [SerializeField] GameObject MenuManager;
 
   private bool isActivated = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -16,10 +17,11 @@ public class TutorialCheckPoint : MonoBehaviour
         {
             isActivated = true;
             GameObject Player = other.gameObject;
-            foreach(MonoBehaviour script in Player.GetComponents<MonoBehaviour>())
-            {
-                script.enabled = false;
-            }
+            Player.GetComponent<Movement>().IsPaused = true;
+            Pause.PauseLocked = true;
+            //Cursor.visible = true;
+            //MenuManager.SetActive(false);
+            //Pause.PauseLocked = true;
             TutorialManager.SetActive(true);
             return;
         }

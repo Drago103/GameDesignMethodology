@@ -46,6 +46,8 @@ public class Movement : MonoBehaviour
 
     private bool cameraLocked = true;
 
+    public bool IsPaused { get; set; }
+
     private float currentYRotation;
 
     public float CurrentYPos{
@@ -259,6 +261,8 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
+        if (IsPaused) return;
+        
         GroundCheck();
         dash.CheckDashInput(controls);
         MovePlayer();
