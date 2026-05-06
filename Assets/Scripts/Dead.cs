@@ -35,6 +35,7 @@ public class Dead : MonoBehaviour
         
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+            gameover.SetActive(true);
         }
     }
     
