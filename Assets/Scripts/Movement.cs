@@ -68,6 +68,7 @@ public class Movement : MonoBehaviour
         controls = new PlayerControls();
 
         rb.constraints = RigidbodyConstraints.FreezeRotationX |
+                         RigidbodyConstraints.FreezeRotationY |
                          RigidbodyConstraints.FreezeRotationZ;
 
         controls.Player.Move.performed += ctx =>
