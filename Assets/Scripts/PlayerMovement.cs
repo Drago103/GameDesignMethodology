@@ -471,10 +471,10 @@ public class PlayerMovement : MonoBehaviour
 
                 MoveSpeed = originalSpeed;
 
-                PendingSlide = true;
                 yield break;
             }
 
+                PendingSlide = true;
             yield return null;
         }
 
@@ -538,7 +538,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-
         GroundCheck();
         CheckDashInput();
         MovePlayer();
