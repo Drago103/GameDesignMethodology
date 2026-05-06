@@ -89,16 +89,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
 
         Debug.Log("Time Slow DOWN!");
     }
-
-    void TimeSlowDown()
-    {
-        print(_isHolding);
-        float target = _isHolding ? slowFactor : 1f;
-
-        Time.timeScale = Mathf.MoveTowards(Time.timeScale, target, changeSpeed * Time.unscaledDeltaTime);
-        Time.fixedDeltaTime = 0.02f * Time.timeScale;
-    }
-
+    
     void UpdateTimeScale()
     {
         float target = _isActive ? slowFactor : 1f;
