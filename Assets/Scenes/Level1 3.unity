@@ -202,7 +202,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1339901825}
         m_TargetAssemblyTypeName: L3PauseMenu, Assembly-CSharp
         m_MethodName: ResumeGame
         m_Mode: 1
@@ -996,7 +996,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1339901825}
         m_TargetAssemblyTypeName: L3PauseMenu, Assembly-CSharp
         m_MethodName: RestartLevel
         m_Mode: 1
@@ -1204,7 +1204,7 @@ MonoBehaviour:
   wallThickness: 1
   wallBaseY: 0
   treeY: 0
-  rockY: 0
+  rockY: -0.5
   decorationY: 0
   player: {fileID: 1337145332}
   playerStartPosition: {x: 10, y: 0.5, z: 259}
@@ -2285,7 +2285,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1339901825}
         m_TargetAssemblyTypeName: L3PauseMenu, Assembly-CSharp
         m_MethodName: GoToMainMenu
         m_Mode: 1
@@ -4323,7 +4323,7 @@ Light:
   serializedVersion: 12
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 0
+  m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -4485,7 +4485,7 @@ PrefabInstance:
     - target: {fileID: 5128378212095924029, guid: 68765046144f6c242b75d18b3c92d0e4, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: b06a105183209fc4ca3bb216967f49c9, type: 2}
+      objectReference: {fileID: 2100000, guid: 2acc3748d3c66c24089a27b38b131c7d, type: 2}
     - target: {fileID: 5872336721013574556, guid: 68765046144f6c242b75d18b3c92d0e4, type: 3}
       propertyPath: m_Name
       value: Ground
