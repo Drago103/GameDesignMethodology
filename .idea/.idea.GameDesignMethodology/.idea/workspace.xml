@@ -7,6 +7,7 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
+<<<<<<< Updated upstream
     <list default="true" id="41aff3d1-476c-425d-a6a2-caa876c1f8eb" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GameDesignMethodology/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/InputSystems/PlayerControls.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/InputSystems/PlayerControls.cs" afterDir="false" />
@@ -18,6 +19,9 @@
       <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Bangers SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Bangers SDF.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Electronic Highway Sign SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Electronic Highway Sign SDF.asset" afterDir="false" />
     </list>
+=======
+    <list default="true" id="41aff3d1-476c-425d-a6a2-caa876c1f8eb" name="Changes" comment="" />
+>>>>>>> Stashed changes
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -102,7 +106,7 @@
 }</component>
   <component name="RunManager" selected="Unity Attach To.Attach to">
     <configuration name="Start Unity" type="RunUnityExe" factoryName="Unity Executable">
-      <option name="EXE_PATH" value="D:\GameEngine\Unity\6000.3.10f1\Editor\Unity.exe" />
+      <option name="EXE_PATH" value="C:\Program Files\Unity\Hub\Editor\6000.3.10f1\Editor\Unity.exe" />
       <option name="PROGRAM_PARAMETERS" value="-projectPath D:\Codes\Rider\GameDesignMethodology -debugCodeOptimization" />
       <option name="WORKING_DIRECTORY" value="D:\Codes\Rider\GameDesignMethodology" />
       <option name="PASS_PARENT_ENVS" value="1" />
@@ -112,7 +116,7 @@
       <method v="2" />
     </configuration>
     <configuration name="Unit Tests (batch mode)" type="RunUnityExe" factoryName="Unity Executable">
-      <option name="EXE_PATH" value="D:\GameEngine\Unity\6000.3.10f1\Editor\Unity.exe" />
+      <option name="EXE_PATH" value="C:\Program Files\Unity\Hub\Editor\6000.3.10f1\Editor\Unity.exe" />
       <option name="PROGRAM_PARAMETERS" value="-runTests -batchmode -projectPath D:\Codes\Rider\GameDesignMethodology -testResults Logs/results.xml -logFile Logs/Editor.log -testPlatform EditMode -debugCodeOptimization" />
       <option name="WORKING_DIRECTORY" value="D:\Codes\Rider\GameDesignMethodology" />
       <option name="PASS_PARENT_ENVS" value="1" />
@@ -169,7 +173,13 @@
       <workItem from="1777719591741" duration="1551000" />
       <workItem from="1777906578676" duration="222000" />
       <workItem from="1777955671061" duration="4034000" />
+<<<<<<< Updated upstream
       <workItem from="1777998925533" duration="4082000" />
+=======
+      <workItem from="1777998925533" duration="7828000" />
+      <workItem from="1778042763528" duration="645000" />
+      <workItem from="1778146591443" duration="470000" />
+>>>>>>> Stashed changes
     </task>
     <servers />
   </component>
