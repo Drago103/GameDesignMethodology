@@ -7,7 +7,7 @@ public class gameover : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Gameover"))
         {
             SceneManager.LoadScene(loadscene);
         }
