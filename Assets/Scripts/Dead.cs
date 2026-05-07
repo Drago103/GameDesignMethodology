@@ -26,6 +26,7 @@ public class Dead : MonoBehaviour
             Time.timeScale = 0;
             gameover.SetActive(true);
         }
+
     }
     
     private void DisablePlayerControl(GameObject player)
@@ -35,10 +36,6 @@ public class Dead : MonoBehaviour
         {
             s.enabled = false;
         }
-        if (other.CompareTag("Gameover"))
-        {
-            Time.timeScale = 0;
-            gameoverCanvas.SetActive(true);
-        }
+       
     }
 }
