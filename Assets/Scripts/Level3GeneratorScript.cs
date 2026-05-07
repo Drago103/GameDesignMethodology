@@ -71,7 +71,6 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
         GenerateTrees();
         GenerateRocks();
         GenerateDecorations();
-        GenerateLevelEnd();
 
         // Initial spawn attempt.
         PositionPlayer();
@@ -393,41 +392,6 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
             wallHeight,
             length
         );
-    }
-    
-    void GenerateLevelEnd()
-    {
-        if (levelEndPrefab == null)
-        {
-            Debug.LogWarning("[LEVEL END] Level End Prefab is not assigned.");
-            return;
-        }
-
-        GameObject endObj = Instantiate(
-            levelEndPrefab,
-            levelEndPosition,
-            Quaternion.Euler(levelEndRotation),
-            transform
-        );
-
-        endObj.name = "LevelEndTrigger";
-        endObj.transform.localScale = levelEndScale;
-
-        Collider col = endObj.GetComponent<Collider>();
-        if (col == null)
-        {
-            col = endObj.AddComponent<SphereCollider>();
-        }
-
-        col.isTrigger = true;
-
-        Level3EndTrigger trigger = endObj.GetComponent<Level3EndTrigger>();
-        if (trigger == null)
-        {
-            trigger = endObj.AddComponent<Level3EndTrigger>();
-        }
-
-        trigger.nextLevelSceneName = nextLevelSceneName;
     }
 
     void PositionPlayer()
