@@ -111,7 +111,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7776208660801147200
 MonoBehaviour:
@@ -125,5 +125,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00c142c50ea0c9745a54f91b2d135ea4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level3EndTrigger
+  levelCompletePanel: {fileID: 0}
+  levelCompleteText: {fileID: 0}
   nextLevelSceneName: Level4
-  winPanel: {fileID: 0}
+  mainMenuSceneName: MainMenu
+  scriptsToDisable:
+  - {fileID: 0}
