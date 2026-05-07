@@ -34,7 +34,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Interact",
+                    "name": "Slide",
                     "type": "Button",
                     "id": "61e29855-7778-4dc3-9a48-61c1d819aa6b",
                     "expectedControlType": "",
@@ -52,18 +52,27 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Dash",
+                    "type": "Button",
+                    "id": "723428ef-718e-48bc-87dd-e91daf3dfcce",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Look",
                     "type": "Value",
-                    "id": "c6bad923-2178-4ad2-8f1a-5618172a844b",
+                    "id": "78b15173-58da-4eb4-aeb9-8103f050acba",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Dash",
+                    "name": "Pause",
                     "type": "Button",
-                    "id": "0fad9cd6-3cf3-4f29-a7a6-ddcb7df9fb77",
+                    "id": "6f5fe140-4743-4b4f-95f1-0da937422f10",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -155,7 +164,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Interact",
+                    "action": "Slide",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -172,7 +181,18 @@
                 },
                 {
                     "name": "",
-                    "id": "c9a4f3d1-c1e6-4e34-9015-6308a875aab2",
+                    "id": "0d7478f5-b9f5-4ca4-856c-cd9be8a9e7f0",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "073c0afc-f017-49c4-8776-33f924c8c241",
                     "path": "<Mouse>/delta",
                     "interactions": "",
                     "processors": "",
@@ -183,12 +203,12 @@
                 },
                 {
                     "name": "",
-                    "id": "50b79fa2-c0bf-4931-8fad-4fcaff564c65",
-                    "path": "<Keyboard>/shift",
+                    "id": "9f121a14-69f5-47a1-886b-0ab4b5f8e04b",
+                    "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Dash",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

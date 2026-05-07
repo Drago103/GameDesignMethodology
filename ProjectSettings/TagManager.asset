@@ -9,11 +9,13 @@ TagManager:
   - ReboundWall
   - LowObj
   - Anti-RunZone
+  - Roof
+  - Gameover
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ground
   - Water
   - UI
   - 
