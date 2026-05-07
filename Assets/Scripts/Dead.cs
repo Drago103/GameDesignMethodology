@@ -5,49 +5,35 @@ using UnityEngine.SceneManagement;
 public class Dead : MonoBehaviour
 {
     public GameObject gameover;
-    private GameObject player;
     private Rigidbody _rb;
-
-    private MonoBehaviour[] playerScripts;
-    private bool[] scriptsEnabled;
     
-    void Start()
-    {
-        player = GameObject.FindWithTag("Player");
-    }
+
     private void OnTriggerEnter(Collider other)
     {
         
         if (other.CompareTag("Player"))
         {
-        
-            _rb=player.GetComponent<Rigidbody>();
-        
-            DisablePlayerControl(player);
+            _rb = other.GetComponent<Rigidbody>();
+            DisablePlayerControl(other.gameObject);
+            
             if (_rb != null)
             {
                 _rb.linearVelocity = Vector3.zero;
                 _rb.angularVelocity = Vector3.zero;
                 _rb.Sleep();
             }
+            
             Time.timeScale = 0;
-        
-        
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
             gameover.SetActive(true);
         }
     }
     
-    private void DisablePlayerControl(GameObject playerObj)
+    private void DisablePlayerControl(GameObject player)
     {
-        playerScripts = playerObj.GetComponents<MonoBehaviour>();
-        scriptsEnabled = new bool[playerScripts.Length];
-
-        for (int i = 0; i < playerScripts.Length; i++)
+        MonoBehaviour[] scripts = player.GetComponents<MonoBehaviour>();
+        foreach (var s in scripts)
         {
-            scriptsEnabled[i] = playerScripts[i].enabled;
-            playerScripts[i].enabled = false;
+            s.enabled = false;
         }
     }
 }
