@@ -46,6 +46,8 @@ public class Movement : MonoBehaviour
 
     private bool cameraLocked = true;
 
+    public bool IsPaused { get; set; }
+
     private float currentYRotation;
 
     public float CurrentYPos{
@@ -178,11 +180,17 @@ public class Movement : MonoBehaviour
     void OnCollisionEnter(Collision other)
     {
         Debug.Log("[COLLISION ENTER] Hit: " + other.collider.tag);
+        if (other.collider.CompareTag("Wall"))
+        {
+            wallNormal = other.GetContact(0).normal;
+            rb.AddForce( wallNormal* 2f, ForceMode.Impulse);
+        }
     }
 
     void OnCollisionExit(Collision other)
     {
         Debug.Log("[COLLISION EXIT] Left: " + other.collider.tag);
+
     }
 
     void OnTriggerEnter(Collider other)
@@ -253,10 +261,12 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
+        if (IsPaused) return;
+        
         GroundCheck();
         dash.CheckDashInput(controls);
         MovePlayer();
-        if (!wallRebound.isRotating && isGrounded && !slide.IsSliding)
+        if (!wallRebound.isRotating && !slide.IsSliding)
             RotatePlayer();
 
         Jumping();
