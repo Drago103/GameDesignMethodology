@@ -3,10 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class L3PauseMenu : MonoBehaviour
 {
-    [Header("Pause Menu UI")]
     public GameObject pauseMenuPanel;
-
-    [Header("Scene Settings")]
     public string mainMenuSceneName = "MainMenu";
 
     private bool isPaused = false;
@@ -16,47 +13,30 @@ public class L3PauseMenu : MonoBehaviour
         Debug.Log("PauseMenu script started");
 
         if (pauseMenuPanel != null)
-        {
             pauseMenuPanel.SetActive(false);
-        }
-        else
-        {
-            Debug.LogWarning("Pause Menu Panel is not assigned!");
-        }
 
         Time.timeScale = 1f;
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Debug.Log("Escape key pressed");
+            Debug.Log("Escape pressed");
 
             if (isPaused)
-            {
                 ResumeGame();
-            }
             else
-            {
                 PauseGame();
-            }
         }
     }
 
     public void PauseGame()
     {
-        Debug.Log("Game Paused");
-
         isPaused = true;
 
         if (pauseMenuPanel != null)
-        {
             pauseMenuPanel.SetActive(true);
-        }
 
         Time.timeScale = 0f;
 
@@ -66,14 +46,10 @@ public class L3PauseMenu : MonoBehaviour
 
     public void ResumeGame()
     {
-        Debug.Log("Game Resumed");
-
         isPaused = false;
 
         if (pauseMenuPanel != null)
-        {
             pauseMenuPanel.SetActive(false);
-        }
 
         Time.timeScale = 1f;
 
