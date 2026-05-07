@@ -45190,6 +45190,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8210686547462948919, guid: 34942de4894dd8f47985533c2dfccd04, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 162413582}
+    - target: {fileID: 8210686547462948919, guid: 34942de4894dd8f47985533c2dfccd04, type: 3}
       propertyPath: pauseUI
       value: 
       objectReference: {fileID: 1606329395}
