@@ -22,7 +22,7 @@ RenderSettings:
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0, g: 0, b: 0, a: 1}
   m_AmbientEquatorColor: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 1}
-  m_AmbientGroundColor: {r: 0.8679245, g: 0.8679245, b: 0.8679245, a: 1}
+  m_AmbientGroundColor: {r: 0.5849056, g: 0.5849056, b: 0.5849056, a: 1}
   m_AmbientIntensity: 0
   m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0, g: 0, b: 0, a: 1}
@@ -23111,6 +23111,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 575027673222097644, guid: 4416d1a6b0044b74e865d88df8cf4999, type: 3}
+      propertyPath: CanDash
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 575027673222097644, guid: 4416d1a6b0044b74e865d88df8cf4999, type: 3}
+      propertyPath: CanSlide
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 575027673222097644, guid: 4416d1a6b0044b74e865d88df8cf4999, type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
@@ -23118,6 +23126,10 @@ PrefabInstance:
       propertyPath: headTarget
       value: 
       objectReference: {fileID: 1459608887}
+    - target: {fileID: 575027673222097644, guid: 4416d1a6b0044b74e865d88df8cf4999, type: 3}
+      propertyPath: CanWallJump
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2927061254472844760, guid: 4416d1a6b0044b74e865d88df8cf4999, type: 3}
       propertyPath: m_Enabled
       value: 1
