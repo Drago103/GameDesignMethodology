@@ -169,7 +169,10 @@ public class Movement : MonoBehaviour
 
     void Jumping()
     {
-        if (CanJump && controls.Player.Jump.triggered)
+        if (wallRebound.onwall || wallRebound.Walljumping)
+        return;
+
+        if (isGrounded && CanJump && controls.Player.Jump.triggered)
         {
             Debug.Log("[JUMP] Jump triggered");
             rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
@@ -207,11 +210,11 @@ public class Movement : MonoBehaviour
         Debug.Log("[COLLISION EXIT] Left: " + other.collider.tag);
 
 
-        if (other.collider.CompareTag("Ground"))
-        {
+        // if (other.collider.CompareTag("Ground"))
+        // {
             
-            CanJump = false;
-        }
+        //     CanJump = false;
+        // }
     }
 
     void OnTriggerEnter(Collider other)
@@ -282,7 +285,7 @@ public class Movement : MonoBehaviour
     IEnumerator unlockJump()
     {
         CanJump = false;                    
-        yield return new WaitForSeconds(1f);                    
+        yield return new WaitForSeconds(0.2f);                    
     }
 
     void Update()
