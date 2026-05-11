@@ -1,6 +1,10 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+<<<<<<<< HEAD:Assets/AllSkyFree/_AllSkyFreeDemoEnvironment/Materials/AllSkyDemoEnv_Flag_Red.mat
 --- !u!114 &-5244119354637511243
+========
+--- !u!114 &-4017205389926468911
+>>>>>>>> parent of 7ee813d (Revert "Merge branch 'Level1' into PolishLevel1"):Assets/Materials/Level3 Sand.mat
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,11 +24,19 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+<<<<<<<< HEAD:Assets/AllSkyFree/_AllSkyFreeDemoEnvironment/Materials/AllSkyDemoEnv_Flag_Red.mat
   m_Name: AllSkyDemoEnv_Flag_Red
+========
+  m_Name: Level3 Sand
+>>>>>>>> parent of 7ee813d (Revert "Merge branch 'Level1' into PolishLevel1"):Assets/Materials/Level3 Sand.mat
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _NORMALMAP
+  - _OCCLUSIONMAP
+  - _PARALLAXMAP
+  - _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -34,16 +46,21 @@ Material:
     RenderType: Opaque
   disabledShaderPasses:
   - MOTIONVECTORS
-  m_LockedProperties: 
+  m_LockedProperties: _OcclusionMap
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
+<<<<<<<< HEAD:Assets/AllSkyFree/_AllSkyFreeDemoEnvironment/Materials/AllSkyDemoEnv_Flag_Red.mat
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
+========
+        m_Texture: {fileID: 2800000, guid: 1d3cc784dcc4d2b428b94406ee830af8, type: 3}
+        m_Scale: {x: 1000, y: 1000}
+>>>>>>>> parent of 7ee813d (Revert "Merge branch 'Level1' into PolishLevel1"):Assets/Materials/Level3 Sand.mat
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: b918f77046250d245b43b52675bf352a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -63,19 +80,24 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
+<<<<<<<< HEAD:Assets/AllSkyFree/_AllSkyFreeDemoEnvironment/Materials/AllSkyDemoEnv_Flag_Red.mat
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
+========
+        m_Texture: {fileID: 2800000, guid: 1d3cc784dcc4d2b428b94406ee830af8, type: 3}
+        m_Scale: {x: 1000, y: 1000}
+>>>>>>>> parent of 7ee813d (Revert "Merge branch 'Level1' into PolishLevel1"):Assets/Materials/Level3 Sand.mat
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: efc0e136b72e2fa45bf054827c78a336, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: fa7e642485cd2804d94439e2c3993bd1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
@@ -117,6 +139,7 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
+<<<<<<<< HEAD:Assets/AllSkyFree/_AllSkyFreeDemoEnvironment/Materials/AllSkyDemoEnv_Flag_Red.mat
     - _Parallax: 0.02
     - _QueueOffset: 0
     - _ReceiveShadows: 1
@@ -124,6 +147,13 @@ Material:
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SnowLevel: 0
+========
+    - _Parallax: 0.08
+    - _QueueOffset: 0
+    - _ReceiveShadows: 1
+    - _Smoothness: 0
+    - _SmoothnessTextureChannel: 1
+>>>>>>>> parent of 7ee813d (Revert "Merge branch 'Level1' into PolishLevel1"):Assets/Materials/Level3 Sand.mat
     - _SpecularHighlights: 1
     - _SpecularPower: 0.08
     - _SrcBlend: 1
@@ -138,10 +168,14 @@ Material:
     - _Color: {r: 1, g: 0, b: 0, a: 1}
     - _DiffuseColour: {r: 0.9191176, g: 0.2770403, b: 0.08785681, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+<<<<<<<< HEAD:Assets/AllSkyFree/_AllSkyFreeDemoEnvironment/Materials/AllSkyDemoEnv_Flag_Red.mat
     - _RimColour: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _SnowColour: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _SnowSpecularColour: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecularColour: {r: 1, g: 0.63235295, b: 0.63235295, a: 1}
+========
+    - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+>>>>>>>> parent of 7ee813d (Revert "Merge branch 'Level1' into PolishLevel1"):Assets/Materials/Level3 Sand.mat
   m_BuildTextureStacks: []
   m_AllowLocking: 1
