@@ -1,0 +1,261 @@
+Index: Assets/Scripts/Level3GeneratorScript.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using UnityEngine;\r\nusing System.Collections;\r\nusing System.Collections.Generic;\r\n\r\npublic class HandcraftedDesertMapGenerator : MonoBehaviour\r\n{\r\n    [Header(\"Level Scale\")]\r\n    public float levelScale = 2.5f;\r\n\r\n    [Header(\"Floor\")]\r\n    public GameObject sandTilePrefab;\r\n    public int floorTilesX = 46;\r\n    public int floorTilesZ = 22;\r\n    public float tileSize = 10f;\r\n    public float floorY = -0.1f;\r\n\r\n    [Header(\"Floor Texture\")]\r\n    public Vector2 sandTextureTiling = new Vector2(6f, 6f);\r\n\r\n    [Header(\"Prefabs\")]\r\n    public GameObject wallPrefab;\r\n    public GameObject[] treePrefabs;\r\n    public GameObject[] rockPrefabs;\r\n    public GameObject[] decorationPrefabs;\r\n\r\n    [Header(\"Wall Shape\")]\r\n    public float wallHeight = 10f;\r\n    public float wallThickness = 1f;\r\n    public float wallBaseY = 0f;\r\n\r\n    [Header(\"Object Heights\")]\r\n    public float treeY = 0f;\r\n    public float rockY = 0f;\r\n    public float decorationY = 0f;\r\n\r\n    [Header(\"Player\")]\r\n    public Transform player;\r\n    public Vector3 playerStartPosition = new Vector3(10f, 0.5f, 259f);\r\n    public Vector3 playerStartRotation = new Vector3(0f, 90f, 0f);\r\n\r\n    [Header(\"Level End\")]\r\n    public GameObject levelEndPrefab;\r\n    public Vector3 levelEndPosition = new Vector3(480f, 3f, 50f);\r\n    public Vector3 levelEndRotation = new Vector3(0f, 0f, 0f);\r\n    public Vector3 levelEndScale = new Vector3(3f, 3f, 3f);\r\n    public string nextLevelSceneName = \"Level 4\";\r\n    \r\n    void Start()\r\n    {\r\n        GenerateMap();\r\n\r\n        // Force spawn again after other scripts and physics initialise.\r\n        StartCoroutine(ForcePlayerSpawnNextFrame());\r\n    }\r\n\r\n    IEnumerator ForcePlayerSpawnNextFrame()\r\n    {\r\n        yield return null;\r\n        PositionPlayer();\r\n\r\n        yield return new WaitForFixedUpdate();\r\n        PositionPlayer();\r\n    }\r\n\r\n    public void GenerateMap()\r\n    {\r\n        ClearChildren();\r\n\r\n        // GenerateFloor();\r\n        GenerateWalls();\r\n        GenerateTrees();\r\n        GenerateRocks();\r\n        GenerateDecorations();\r\n\r\n        // Initial spawn attempt.\r\n        PositionPlayer();\r\n    }\r\n\r\n    // void GenerateFloor()\r\n    // {\r\n    //     if (sandTilePrefab == null) return;\r\n    //\r\n    //     for (int x = 0; x < floorTilesX; x++)\r\n    //     {\r\n    //         for (int z = 0; z < floorTilesZ; z++)\r\n    //         {\r\n    //             Vector3 pos = new Vector3(x * tileSize, floorY, z * tileSize);\r\n    //\r\n    //             GameObject tile = Instantiate(\r\n    //                 sandTilePrefab,\r\n    //                 pos,\r\n    //                 Quaternion.identity,\r\n    //                 transform\r\n    //             );\r\n    //\r\n    //             tile.name = $\"SandTile_{x}_{z}\";\r\n    //             tile.transform.localScale = new Vector3(tileSize, 0.2f, tileSize);\r\n    //\r\n    //             Renderer rend = tile.GetComponent<Renderer>();\r\n    //             if (rend != null)\r\n    //             {\r\n    //                 Material mat = rend.material;\r\n    //\r\n    //                 if (mat.HasProperty(\"_BaseMap\"))\r\n    //                     mat.SetTextureScale(\"_BaseMap\", sandTextureTiling);\r\n    //\r\n    //                 if (mat.HasProperty(\"_MainTex\"))\r\n    //                     mat.SetTextureScale(\"_MainTex\", sandTextureTiling);\r\n    //             }\r\n    //         }\r\n    //     }\r\n    // }\r\n\r\n    void GenerateWalls()\r\n    {\r\n        if (wallPrefab == null) return;\r\n        \r\n        //Start Back Wall\r\n        CreateWallChain(new Vector3[]\r\n        {\r\n            new Vector3(0, 0, 90),\r\n            new Vector3(0, 0, 115)\r\n        });\r\n\r\n        // START CORRIDOR\r\n        CreateWallChain(new Vector3[]\r\n        {\r\n            new Vector3(0, 0, 115),\r\n            new Vector3(90, 0, 115)\r\n        });\r\n\r\n        CreateWallChain(new Vector3[]\r\n        {\r\n            new Vector3(0, 0, 90),\r\n            new Vector3(85, 0, 90),\r\n            new Vector3(110, 0, 75)\r\n        });\r\n\r\n        // OUTER TOP WALL\r\n        CreateWallChain(new Vector3[]\r\n        {\r\n            new Vector3(90, 0, 115),\r\n            new Vector3(135, 0, 130),\r\n            new Vector3(175, 0, 110),\r\n            new Vector3(220, 0, 118),\r\n            new Vector3(265, 0, 105),\r\n            new Vector3(310, 0, 90),\r\n            new Vector3(300, 0, 140),\r\n            new Vector3(470, 0, 90)\r\n        });\r\n\r\n        // OUTER BOTTOM WALL\r\n        CreateWallChain(new Vector3[]\r\n        {\r\n            new Vector3(110, 0, 75),\r\n            new Vector3(135, 0, 10),\r\n            new Vector3(200, 0, 0),\r\n            new Vector3(260, 0, 15),\r\n            new Vector3(300, 0, 30),\r\n            new Vector3(360, 0, 10),\r\n            new Vector3(430, 0, 25)\r\n        });\r\n\r\n        // INNER TOP CORRIDOR\r\n        CreateWallChain(new Vector3[]\r\n        {\r\n            new Vector3(170, 0, 85),\r\n            new Vector3(215, 0, 95),\r\n            new Vector3(260, 0, 80),\r\n            new Vector3(255, 0, 60)\r\n        });\r\n\r\n        // INNER LOWER CORRIDOR\r\n        CreateWallChain(new Vector3[]\r\n        {\r\n            new Vector3(160, 0, 55),\r\n            new Vector3(205, 0, 65),\r\n            new Vector3(255, 0, 55),\r\n            new Vector3(330, 0, 35)\r\n        });\r\n\r\n        // LEFT DIAGONAL WALL\r\n        CreateWallChain(new Vector3[]\r\n        {\r\n            new Vector3(120, 0, 80),\r\n            new Vector3(150, 0, 20),\r\n            new Vector3(200, 0, 10)\r\n        });\r\n\r\n        // RIGHT TRIANGLE FUNNEL\r\n        CreateWallChain(new Vector3[]\r\n        {\r\n            new Vector3(320, 0, 80),\r\n            new Vector3(430, 0, 50),\r\n            new Vector3(320, 0, 35),\r\n            new Vector3(340, 0, 55)\r\n        });\r\n\r\n        // RIGHT INNER LINE\r\n        CreateWallChain(new Vector3[]\r\n        {\r\n            new Vector3(300, 0, 50),\r\n            new Vector3(380, 0, 50)\r\n        });\r\n\r\n        // FINAL END CORRIDOR\r\n        CreateWallChain(new Vector3[]\r\n        {\r\n            new Vector3(430, 0, 25),\r\n            new Vector3(480, 0, 40)\r\n        });\r\n\r\n        CreateWallChain(new Vector3[]\r\n        {\r\n            new Vector3(470, 0, 90),\r\n            new Vector3(480, 0, 60)\r\n        });\r\n    }\r\n\r\n    void GenerateTrees()\r\n    {\r\n        if (treePrefabs == null || treePrefabs.Length == 0) return;\r\n\r\n        Vector3[] treePositions = new Vector3[]\r\n        {\r\n            new Vector3(110, treeY, 108),\r\n            new Vector3(120, treeY, 98),\r\n            new Vector3(130, treeY, 92),\r\n\r\n            new Vector3(150, treeY, 78),\r\n            new Vector3(165, treeY, 70),\r\n            new Vector3(180, treeY, 62),\r\n\r\n            new Vector3(200, treeY, 85),\r\n            new Vector3(215, treeY, 80),\r\n            new Vector3(230, treeY, 76),\r\n\r\n            new Vector3(210, treeY, 55),\r\n            new Vector3(230, treeY, 52),\r\n            new Vector3(250, treeY, 48),\r\n\r\n            new Vector3(260, treeY, 60),\r\n            new Vector3(275, treeY, 55),\r\n            new Vector3(290, treeY, 50),\r\n\r\n            new Vector3(305, treeY, 65),\r\n            new Vector3(320, treeY, 60),\r\n            new Vector3(335, treeY, 55),\r\n\r\n            new Vector3(350, treeY, 65),\r\n            new Vector3(360, treeY, 55),\r\n\r\n            new Vector3(375, treeY, 50),\r\n            new Vector3(390, treeY, 45),\r\n            new Vector3(405, treeY, 42),\r\n\r\n            new Vector3(420, treeY, 50),\r\n            new Vector3(435, treeY, 45),\r\n            new Vector3(450, treeY, 40)\r\n        };\r\n\r\n        for (int i = 0; i < treePositions.Length; i++)\r\n        {\r\n            GameObject prefab = treePrefabs[i % treePrefabs.Length];\r\n            Vector3 pos = treePositions[i] * levelScale;\r\n            pos.y = treeY;\r\n\r\n            GameObject obj = Instantiate(\r\n                prefab,\r\n                pos,\r\n                Quaternion.Euler(0f, i * 23f, 0f),\r\n                transform\r\n            );\r\n\r\n            float scale = Random.Range(1.5f, 2.2f) * levelScale;\r\n            obj.transform.localScale = Vector3.one * scale;\r\n        }\r\n    }\r\n\r\n    void GenerateRocks()\r\n    {\r\n        if (rockPrefabs == null || rockPrefabs.Length == 0) return;\r\n\r\n        int rockCount = 240;\r\n\r\n        float minX = 5f;\r\n        float maxX = 460f;\r\n\r\n        float minZ = 20f;\r\n        float maxZ = 120f;\r\n\r\n        for (int i = 0; i < rockCount; i++)\r\n        {\r\n            float x = Random.Range(minX, maxX);\r\n            float z = Random.Range(minZ, maxZ);\r\n\r\n            Vector3 pos = new Vector3(x, rockY, z) * levelScale;\r\n            pos.y = rockY;\r\n\r\n            GameObject prefab = rockPrefabs[Random.Range(0, rockPrefabs.Length)];\r\n\r\n            GameObject rock = Instantiate(\r\n                prefab,\r\n                pos,\r\n                Quaternion.Euler(0f, Random.Range(0f, 360f), 0f),\r\n                transform\r\n            );\r\n            \r\n            if (rock.GetComponent<RockHazard>() == null)\r\n            {\r\n                rock.AddComponent<RockHazard>();\r\n            }\r\n\r\n            float scale = Random.Range(0.8f, 2.2f) * levelScale * 0.6f;\r\n            rock.transform.localScale = Vector3.one * scale;\r\n        }\r\n    }\r\n\r\n    void GenerateDecorations()\r\n    {\r\n        if (decorationPrefabs == null || decorationPrefabs.Length == 0) return;\r\n\r\n        Vector3[] decorationPositions = new Vector3[]\r\n        {\r\n            new Vector3(115, decorationY, 112),\r\n\r\n            new Vector3(150, decorationY, 85),\r\n            new Vector3(170, decorationY, 75),\r\n\r\n            new Vector3(200, decorationY, 70),\r\n            new Vector3(225, decorationY, 60),\r\n\r\n            new Vector3(260, decorationY, 60),\r\n            new Vector3(285, decorationY, 55),\r\n\r\n            new Vector3(310, decorationY, 60),\r\n            new Vector3(340, decorationY, 52),\r\n\r\n            new Vector3(370, decorationY, 50),\r\n            new Vector3(395, decorationY, 45),\r\n\r\n            new Vector3(420, decorationY, 45),\r\n            new Vector3(450, decorationY, 38)\r\n        };\r\n\r\n        for (int i = 0; i < decorationPositions.Length; i++)\r\n        {\r\n            GameObject prefab = decorationPrefabs[i % decorationPrefabs.Length];\r\n            Vector3 pos = decorationPositions[i] * levelScale;\r\n            pos.y = decorationY;\r\n\r\n            Instantiate(\r\n                prefab,\r\n                pos,\r\n                Quaternion.Euler(0f, i * 18f, 0f),\r\n                transform\r\n            );\r\n        }\r\n    }\r\n\r\n    void CreateWallChain(Vector3[] points)\r\n    {\r\n        for (int i = 0; i < points.Length - 1; i++)\r\n        {\r\n            CreateWallSegment(points[i], points[i + 1]);\r\n        }\r\n    }\r\n\r\n    void CreateWallSegment(Vector3 start, Vector3 end)\r\n    {\r\n        start *= levelScale;\r\n        end *= levelScale;\r\n\r\n        Vector3 flatDir = end - start;\r\n        flatDir.y = 0f;\r\n\r\n        float length = flatDir.magnitude;\r\n        if (length < 0.01f) return;\r\n\r\n        Vector3 midpoint = (start + end) * 0.5f;\r\n        midpoint.y = wallBaseY + wallHeight * 0.5f;\r\n\r\n        float angleY = Mathf.Atan2(flatDir.x, flatDir.z) * Mathf.Rad2Deg;\r\n        Quaternion rotation = Quaternion.Euler(0f, angleY, 0f);\r\n\r\n        GameObject wall = Instantiate(wallPrefab, midpoint, rotation, transform);\r\n\r\n        wall.transform.position = midpoint;\r\n        wall.transform.rotation = rotation;\r\n        wall.transform.localScale = new Vector3(\r\n            wallThickness,\r\n            wallHeight,\r\n            length\r\n        );\r\n    }\r\n\r\n    void PositionPlayer()\r\n    {\r\n        if (player == null)\r\n        {\r\n            Debug.LogWarning(\"[SPAWN] Player Transform is not assigned in the level generator.\");\r\n            return;\r\n        }\r\n\r\n        CharacterController cc = player.GetComponent<CharacterController>();\r\n        if (cc != null)\r\n            cc.enabled = false;\r\n\r\n        Rigidbody rb = player.GetComponent<Rigidbody>();\r\n        if (rb != null)\r\n        {\r\n            rb.isKinematic = true;\r\n            rb.linearVelocity = Vector3.zero;\r\n            rb.angularVelocity = Vector3.zero;\r\n        }\r\n\r\n        // Exact coordinates. No levelScale applied.\r\n        player.position = playerStartPosition;\r\n        player.rotation = Quaternion.Euler(playerStartRotation);\r\n\r\n        Physics.SyncTransforms();\r\n\r\n        if (cc != null)\r\n            cc.enabled = true;\r\n\r\n        if (rb != null)\r\n        {\r\n            rb.linearVelocity = Vector3.zero;\r\n            rb.angularVelocity = Vector3.zero;\r\n            rb.isKinematic = false;\r\n        }\r\n\r\n        Debug.Log(\"[SPAWN] Player positioned at: \" + player.position);\r\n    }\r\n\r\n    void ClearChildren()\r\n    {\r\n        List<GameObject> children = new List<GameObject>();\r\n\r\n        foreach (Transform child in transform)\r\n        {\r\n            // Safety check: do not destroy the player if it is accidentally a child\r\n            // of the map generator.\r\n            if (player != null && child == player)\r\n                continue;\r\n\r\n            children.Add(child.gameObject);\r\n        }\r\n\r\n        for (int i = 0; i < children.Count; i++)\r\n        {\r\n#if UNITY_EDITOR\r\n            DestroyImmediate(children[i]);\r\n#else\r\n            Destroy(children[i]);\r\n#endif\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Assets/Scripts/Level3GeneratorScript.cs b/Assets/Scripts/Level3GeneratorScript.cs
+--- a/Assets/Scripts/Level3GeneratorScript.cs	(revision f8ea56fb57975ecdbc11cd4c9ada373e19d83a82)
++++ b/Assets/Scripts/Level3GeneratorScript.cs	(date 1778483990064)
+@@ -71,6 +71,7 @@
+         GenerateTrees();
+         GenerateRocks();
+         GenerateDecorations();
++        GenerateLevelEnd();
+ 
+         // Initial spawn attempt.
+         PositionPlayer();
+@@ -393,7 +394,42 @@
+             length
+         );
+     }
++    
++    void GenerateLevelEnd()
++    {
++        if (levelEndPrefab == null)
++        {
++            Debug.LogWarning("[LEVEL END] Level End Prefab is not assigned.");
++            return;
++        }
+ 
++        GameObject endObj = Instantiate(
++            levelEndPrefab,
++            levelEndPosition,
++            Quaternion.Euler(levelEndRotation),
++            transform
++        );
++
++        endObj.name = "LevelEndTrigger";
++        endObj.transform.localScale = levelEndScale;
++
++        Collider col = endObj.GetComponent<Collider>();
++        if (col == null)
++        {
++            col = endObj.AddComponent<SphereCollider>();
++        }
++
++        col.isTrigger = true;
++
++        Level3EndTrigger trigger = endObj.GetComponent<Level3EndTrigger>();
++        if (trigger == null)
++        {
++            trigger = endObj.AddComponent<Level3EndTrigger>();
++        }
++
++        trigger.nextLevelSceneName = nextLevelSceneName;
++    }
++
+     void PositionPlayer()
+     {
+         if (player == null)
+Index: Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Electronic Highway Sign SDF.asset
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>%YAML 1.1\r\n%TAG !u! tag:unity3d.com,2011:\r\n--- !u!21 &2140032\r\nMaterial:\r\n  serializedVersion: 8\r\n  m_ObjectHideFlags: 0\r\n  m_CorrespondingSourceObject: {fileID: 0}\r\n  m_PrefabInstance: {fileID: 0}\r\n  m_PrefabAsset: {fileID: 0}\r\n  m_Name: Electronic Highway Sign SDF Material\r\n  m_Shader: {fileID: 4800000, guid: fe393ace9b354375a9cb14cdbbc28be4, type: 3}\r\n  m_Parent: {fileID: 0}\r\n  m_ModifiedSerializedProperties: 0\r\n  m_ValidKeywords: []\r\n  m_InvalidKeywords: []\r\n  m_LightmapFlags: 5\r\n  m_EnableInstancingVariants: 0\r\n  m_DoubleSidedGI: 0\r\n  m_CustomRenderQueue: -1\r\n  stringTagMap: {}\r\n  disabledShaderPasses: []\r\n  m_LockedProperties: \r\n  m_SavedProperties:\r\n    serializedVersion: 3\r\n    m_TexEnvs:\r\n    - _BumpMap:\r\n        m_Texture: {fileID: 0}\r\n        m_Scale: {x: 1, y: 1}\r\n        m_Offset: {x: 0, y: 0}\r\n    - _Cube:\r\n        m_Texture: {fileID: 0}\r\n        m_Scale: {x: 1, y: 1}\r\n        m_Offset: {x: 0, y: 0}\r\n    - _FaceTex:\r\n        m_Texture: {fileID: 0}\r\n        m_Scale: {x: 1, y: 1}\r\n        m_Offset: {x: 0, y: 0}\r\n    - _MainTex:\r\n        m_Texture: {fileID: 28981121099961358}\r\n        m_Scale: {x: 1, y: 1}\r\n        m_Offset: {x: 0, y: 0}\r\n    - _OutlineTex:\r\n        m_Texture: {fileID: 0}\r\n        m_Scale: {x: 1, y: 1}\r\n        m_Offset: {x: 0, y: 0}\r\n    m_Ints: []\r\n    m_Floats:\r\n    - _Ambient: 0.5\r\n    - _Bevel: 0.5\r\n    - _BevelClamp: 0\r\n    - _BevelOffset: 0\r\n    - _BevelRoundness: 0\r\n    - _BevelWidth: 0\r\n    - _BumpFace: 0\r\n    - _BumpOutline: 0\r\n    - _ColorMask: 15\r\n    - _CullMode: 0\r\n    - _Diffuse: 0.5\r\n    - _FaceDilate: 0\r\n    - _FaceUVSpeedX: 0\r\n    - _FaceUVSpeedY: 0\r\n    - _GlowInner: 0.05\r\n    - _GlowOffset: 0\r\n    - _GlowOuter: 0.05\r\n    - _GlowPower: 0.75\r\n    - _GradientScale: 11\r\n    - _LightAngle: 3.1416\r\n    - _MaskSoftnessX: 0\r\n    - _MaskSoftnessY: 0\r\n    - _OutlineSoftness: 0\r\n    - _OutlineUVSpeedX: 0\r\n    - _OutlineUVSpeedY: 0\r\n    - _OutlineWidth: 0\r\n    - _PerspectiveFilter: 0.875\r\n    - _Reflectivity: 10\r\n    - _ScaleRatioA: 0.90909094\r\n    - _ScaleRatioB: 0.73125\r\n    - _ScaleRatioC: 0.7386364\r\n    - _ScaleX: 1\r\n    - _ScaleY: 1\r\n    - _ShaderFlags: 0\r\n    - _Sharpness: 0\r\n    - _SpecularPower: 2\r\n    - _Stencil: 0\r\n    - _StencilComp: 8\r\n    - _StencilOp: 0\r\n    - _StencilReadMask: 255\r\n    - _StencilWriteMask: 255\r\n    - _TextureHeight: 1024\r\n    - _TextureWidth: 1024\r\n    - _UnderlayDilate: 0\r\n    - _UnderlayOffsetX: 0\r\n    - _UnderlayOffsetY: 0\r\n    - _UnderlaySoftness: 0\r\n    - _VertexOffsetX: 0\r\n    - _VertexOffsetY: 0\r\n    - _WeightBold: 0.75\r\n    - _WeightNormal: 0\r\n    m_Colors:\r\n    - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}\r\n    - _EnvMatrixRotation: {r: 0, g: 0, b: 0, a: 0}\r\n    - _FaceColor: {r: 1, g: 1, b: 1, a: 1}\r\n    - _GlowColor: {r: 0, g: 1, b: 0, a: 0.5}\r\n    - _MaskCoord: {r: 0, g: 0, b: 32767, a: 32767}\r\n    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}\r\n    - _ReflectFaceColor: {r: 0, g: 0, b: 0, a: 1}\r\n    - _ReflectOutlineColor: {r: 0, g: 0, b: 0, a: 1}\r\n    - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}\r\n    - _UnderlayColor: {r: 0, g: 0, b: 0, a: 0.5}\r\n  m_BuildTextureStacks: []\r\n  m_AllowLocking: 1\r\n--- !u!114 &11400000\r\nMonoBehaviour:\r\n  m_ObjectHideFlags: 0\r\n  m_CorrespondingSourceObject: {fileID: 0}\r\n  m_PrefabInstance: {fileID: 0}\r\n  m_PrefabAsset: {fileID: 0}\r\n  m_GameObject: {fileID: 0}\r\n  m_Enabled: 1\r\n  m_EditorHideFlags: 0\r\n  m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}\r\n  m_Name: Electronic Highway Sign SDF\r\n  m_EditorClassIdentifier: \r\n  m_Version: 1.1.0\r\n  m_FaceInfo:\r\n    m_FaceIndex: 0\r\n    m_FamilyName: Electronic Highway Sign\r\n    m_StyleName: Regular\r\n    m_PointSize: 144\r\n    m_Scale: 1\r\n    m_UnitsPerEM: 2048\r\n    m_LineHeight: 146.57143\r\n    m_AscentLine: 123.42857\r\n    m_CapLine: 115\r\n    m_MeanLine: 115\r\n    m_Baseline: 0\r\n    m_DescentLine: -23.142857\r\n    m_SuperscriptOffset: 123.42857\r\n    m_SuperscriptSize: 0.5\r\n    m_SubscriptOffset: -23.142857\r\n    m_SubscriptSize: 0.5\r\n    m_UnderlineOffset: -14.708571\r\n    m_UnderlineThickness: 2.0571427\r\n    m_StrikethroughOffset: 46\r\n    m_StrikethroughThickness: 2.0571427\r\n    m_TabWidth: 88\r\n  m_Material: {fileID: 2140032}\r\n  m_SourceFontFileGUID: 8a2b9e2a607dd2143b58c44bc32410b4\r\n  m_CreationSettings:\r\n    sourceFontFileName: \r\n    sourceFontFileGUID: 8a2b9e2a607dd2143b58c44bc32410b4\r\n    faceIndex: 0\r\n    pointSizeSamplingMode: 1\r\n    pointSize: 144\r\n    padding: 10\r\n    paddingMode: 0\r\n    packingMode: 4\r\n    atlasWidth: 1024\r\n    atlasHeight: 1024\r\n    characterSetSelectionMode: 6\r\n    characterSequence: \r\n    referencedFontAssetGUID: 8f586378b4e144a9851e7b34d9b748ee\r\n    referencedTextAssetGUID: \r\n    fontStyle: 0\r\n    fontStyleModifier: 0\r\n    renderMode: 4165\r\n    includeFontFeatures: 1\r\n  m_SourceFontFile: {fileID: 12800000, guid: 8a2b9e2a607dd2143b58c44bc32410b4, type: 3}\r\n  m_SourceFontFilePath: \r\n  m_AtlasPopulationMode: 1\r\n  InternalDynamicOS: 0\r\n  m_GlyphTable:\r\n  - m_Index: 66\r\n    m_Metrics:\r\n      m_Width: 76.53125\r\n      m_Height: 14.078125\r\n      m_HorizontalBearingX: 7.40625\r\n      m_HorizontalBearingY: 21.59375\r\n      m_HorizontalAdvance: 88.15625\r\n    m_GlyphRect:\r\n      m_X: 11\r\n      m_Y: 11\r\n      m_Width: 77\r\n      m_Height: 15\r\n    m_Scale: 1\r\n    m_AtlasIndex: 0\r\n    m_ClassDefinitionType: 0\r\n  - m_Index: 42\r\n    m_Metrics:\r\n      m_Width: 76.53125\r\n      m_Height: 107.6875\r\n      m_HorizontalBearingX: 7.40625\r\n      m_HorizontalBearingY: 115.203125\r\n      m_HorizontalAdvance: 88.15625\r\n    m_GlyphRect:\r\n      m_X: 109\r\n      m_Y: 11\r\n      m_Width: 77\r\n      m_Height: 109\r\n    m_Scale: 1\r\n    m_AtlasIndex: 0\r\n    m_ClassDefinitionType: 0\r\n  - m_Index: 68\r\n    m_Metrics:\r\n      m_Width: 76.53125\r\n      m_Height: 107.6875\r\n      m_HorizontalBearingX: 7.40625\r\n      m_HorizontalBearingY: 115.203125\r\n      m_HorizontalAdvance: 88.15625\r\n    m_GlyphRect:\r\n      m_X: 11\r\n      m_Y: 47\r\n      m_Width: 77\r\n      m_Height: 109\r\n    m_Scale: 1\r\n    m_AtlasIndex: 0\r\n    m_ClassDefinitionType: 0\r\n  - m_Index: 80\r\n    m_Metrics:\r\n      m_Width: 76.53125\r\n      m_Height: 107.6875\r\n      m_HorizontalBearingX: 7.40625\r\n      m_HorizontalBearingY: 115.203125\r\n      m_HorizontalAdvance: 88.15625\r\n    m_GlyphRect:\r\n      m_X: 11\r\n      m_Y: 177\r\n      m_Width: 77\r\n      m_Height: 109\r\n    m_Scale: 1\r\n    m_AtlasIndex: 0\r\n    m_ClassDefinitionType: 0\r\n  - m_Index: 72\r\n    m_Metrics:\r\n      m_Width: 76.53125\r\n      m_Height: 107.6875\r\n      m_HorizontalBearingX: 7.40625\r\n      m_HorizontalBearingY: 115.203125\r\n      m_HorizontalAdvance: 88.15625\r\n    m_GlyphRect:\r\n      m_X: 11\r\n      m_Y: 307\r\n      m_Width: 77\r\n      m_Height: 109\r\n    m_Scale: 1\r\n    m_AtlasIndex: 0\r\n    m_ClassDefinitionType: 0\r\n  - m_Index: 3\r\n    m_Metrics:\r\n      m_Width: 0\r\n      m_Height: 0\r\n      m_HorizontalBearingX: 0\r\n      m_HorizontalBearingY: 0\r\n      m_HorizontalAdvance: 88.15625\r\n    m_GlyphRect:\r\n      m_X: 0\r\n      m_Y: 0\r\n      m_Width: 0\r\n      m_Height: 0\r\n    m_Scale: 1\r\n    m_AtlasIndex: 0\r\n    m_ClassDefinitionType: 0\r\n  - m_Index: 49\r\n    m_Metrics:\r\n      m_Width: 76.53125\r\n      m_Height: 107.6875\r\n      m_HorizontalBearingX: 7.40625\r\n      m_HorizontalBearingY: 115.203125\r\n      m_HorizontalAdvance: 88.15625\r\n    m_GlyphRect:\r\n      m_X: 11\r\n      m_Y: 437\r\n      m_Width: 77\r\n      m_Height: 109\r\n    m_Scale: 1\r\n    m_AtlasIndex: 0\r\n    m_ClassDefinitionType: 0\r\n  m_CharacterTable:\r\n  - m_ElementType: 1\r\n    m_Unicode: 95\r\n    m_GlyphIndex: 66\r\n    m_Scale: 1\r\n  - m_ElementType: 1\r\n    m_Unicode: 71\r\n    m_GlyphIndex: 42\r\n    m_Scale: 1\r\n  - m_ElementType: 1\r\n    m_Unicode: 97\r\n    m_GlyphIndex: 68\r\n    m_Scale: 1\r\n  - m_ElementType: 1\r\n    m_Unicode: 109\r\n    m_GlyphIndex: 80\r\n    m_Scale: 1\r\n  - m_ElementType: 1\r\n    m_Unicode: 101\r\n    m_GlyphIndex: 72\r\n    m_Scale: 1\r\n  - m_ElementType: 1\r\n    m_Unicode: 32\r\n    m_GlyphIndex: 3\r\n    m_Scale: 1\r\n  - m_ElementType: 1\r\n    m_Unicode: 78\r\n    m_GlyphIndex: 49\r\n    m_Scale: 1\r\n  m_AtlasTextures:\r\n  - {fileID: 28981121099961358}\r\n  m_AtlasTextureIndex: 0\r\n  m_IsMultiAtlasTexturesEnabled: 0\r\n  m_GetFontFeatures: 1\r\n  m_ClearDynamicDataOnBuild: 1\r\n  m_AtlasWidth: 1024\r\n  m_AtlasHeight: 1024\r\n  m_AtlasPadding: 10\r\n  m_AtlasRenderMode: 4165\r\n  m_UsedGlyphRects:\r\n  - m_X: 0\r\n    m_Y: 0\r\n    m_Width: 98\r\n    m_Height: 36\r\n  - m_X: 98\r\n    m_Y: 0\r\n    m_Width: 98\r\n    m_Height: 130\r\n  - m_X: 0\r\n    m_Y: 36\r\n    m_Width: 98\r\n    m_Height: 130\r\n  - m_X: 0\r\n    m_Y: 166\r\n    m_Width: 98\r\n    m_Height: 130\r\n  - m_X: 0\r\n    m_Y: 296\r\n    m_Width: 98\r\n    m_Height: 130\r\n  - m_X: 0\r\n    m_Y: 426\r\n    m_Width: 98\r\n    m_Height: 130\r\n  m_FreeGlyphRects:\r\n  - m_X: 196\r\n    m_Y: 0\r\n    m_Width: 827\r\n    m_Height: 1023\r\n  - m_X: 98\r\n    m_Y: 130\r\n    m_Width: 925\r\n    m_Height: 893\r\n  - m_X: 0\r\n    m_Y: 556\r\n    m_Width: 1023\r\n    m_Height: 467\r\n  m_FontFeatureTable:\r\n    m_MultipleSubstitutionRecords: []\r\n    m_LigatureSubstitutionRecords: []\r\n    m_GlyphPairAdjustmentRecords:\r\n    - m_FirstAdjustmentRecord:\r\n        m_GlyphIndex: 66\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0.3515625\r\n          m_YAdvance: 0\r\n      m_SecondAdjustmentRecord:\r\n        m_GlyphIndex: 23\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0\r\n          m_YAdvance: 0\r\n      m_FeatureLookupFlags: 80\r\n    - m_FirstAdjustmentRecord:\r\n        m_GlyphIndex: 66\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: -1.40625\r\n          m_YAdvance: 0\r\n      m_SecondAdjustmentRecord:\r\n        m_GlyphIndex: 28\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0\r\n          m_YAdvance: 0\r\n      m_FeatureLookupFlags: 80\r\n    - m_FirstAdjustmentRecord:\r\n        m_GlyphIndex: 66\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0.703125\r\n          m_YAdvance: 0\r\n      m_SecondAdjustmentRecord:\r\n        m_GlyphIndex: 30\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0\r\n          m_YAdvance: 0\r\n      m_FeatureLookupFlags: 80\r\n    - m_FirstAdjustmentRecord:\r\n        m_GlyphIndex: 66\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0.9140625\r\n          m_YAdvance: 0\r\n      m_SecondAdjustmentRecord:\r\n        m_GlyphIndex: 38\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0\r\n          m_YAdvance: 0\r\n      m_FeatureLookupFlags: 80\r\n    - m_FirstAdjustmentRecord:\r\n        m_GlyphIndex: 66\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: -0.703125\r\n          m_YAdvance: 0\r\n      m_SecondAdjustmentRecord:\r\n        m_GlyphIndex: 40\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0\r\n          m_YAdvance: 0\r\n      m_FeatureLookupFlags: 80\r\n    - m_FirstAdjustmentRecord:\r\n        m_GlyphIndex: 66\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: -0.703125\r\n          m_YAdvance: 0\r\n      m_SecondAdjustmentRecord:\r\n        m_GlyphIndex: 55\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0\r\n          m_YAdvance: 0\r\n      m_FeatureLookupFlags: 80\r\n    - m_FirstAdjustmentRecord:\r\n        m_GlyphIndex: 66\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0.5625\r\n          m_YAdvance: 0\r\n      m_SecondAdjustmentRecord:\r\n        m_GlyphIndex: 74\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0\r\n          m_YAdvance: 0\r\n      m_FeatureLookupFlags: 80\r\n    - m_FirstAdjustmentRecord:\r\n        m_GlyphIndex: 66\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: -0.703125\r\n          m_YAdvance: 0\r\n      m_SecondAdjustmentRecord:\r\n        m_GlyphIndex: 87\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0\r\n          m_YAdvance: 0\r\n      m_FeatureLookupFlags: 80\r\n    - m_FirstAdjustmentRecord:\r\n        m_GlyphIndex: 66\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0.9140625\r\n          m_YAdvance: 0\r\n      m_SecondAdjustmentRecord:\r\n        m_GlyphIndex: 106\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0\r\n          m_YAdvance: 0\r\n      m_FeatureLookupFlags: 80\r\n    - m_FirstAdjustmentRecord:\r\n        m_GlyphIndex: 66\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: -0.703125\r\n          m_YAdvance: 0\r\n      m_SecondAdjustmentRecord:\r\n        m_GlyphIndex: 145\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0\r\n          m_YAdvance: 0\r\n      m_FeatureLookupFlags: 80\r\n    - m_FirstAdjustmentRecord:\r\n        m_GlyphIndex: 66\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: -0.703125\r\n          m_YAdvance: 0\r\n      m_SecondAdjustmentRecord:\r\n        m_GlyphIndex: 177\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0\r\n          m_YAdvance: 0\r\n      m_FeatureLookupFlags: 80\r\n    - m_FirstAdjustmentRecord:\r\n        m_GlyphIndex: 66\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: -0.7734375\r\n          m_YAdvance: 0\r\n      m_SecondAdjustmentRecord:\r\n        m_GlyphIndex: 225\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0\r\n          m_YAdvance: 0\r\n      m_FeatureLookupFlags: 80\r\n    - m_FirstAdjustmentRecord:\r\n        m_GlyphIndex: 66\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0.4921875\r\n          m_YAdvance: 0\r\n      m_SecondAdjustmentRecord:\r\n        m_GlyphIndex: 235\r\n        m_GlyphValueRecord:\r\n          m_XPlacement: 0\r\n          m_YPlacement: 0\r\n          m_XAdvance: 0\r\n          m_YAdvance: 0\r\n      m_FeatureLookupFlags: 80\r\n    m_MarkToBaseAdjustmentRecords: []\r\n    m_MarkToMarkAdjustmentRecords: []\r\n  m_ShouldReimportFontFeatures: 0\r\n  m_FallbackFontAssetTable: []\r\n  m_FontWeightTable:\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  fontWeights:\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  - regularTypeface: {fileID: 0}\r\n    italicTypeface: {fileID: 0}\r\n  normalStyle: 0\r\n  normalSpacingOffset: 0\r\n  boldStyle: 0.75\r\n  boldSpacing: 7\r\n  italicStyle: 35\r\n  tabSize: 10\r\n  m_fontInfo:\r\n    Name: Electronic Highway Sign\r\n    PointSize: 144\r\n    Scale: 1\r\n    CharacterCount: 95\r\n    LineHeight: 168\r\n    Baseline: 0\r\n    Ascender: 123.4375\r\n    CapHeight: 115.1875\r\n    Descender: -23.15625\r\n    CenterLine: 0\r\n    SuperscriptOffset: 123.4375\r\n    SubscriptOffset: -14.708571\r\n    SubSize: 0.5\r\n    Underline: -14.708571\r\n    UnderlineThickness: 2.057143\r\n    strikethrough: 36.465908\r\n    strikethroughThickness: 2.057143\r\n    TabWidth: 881.5625\r\n    Padding: 9\r\n    AtlasWidth: 1024\r\n    AtlasHeight: 1024\r\n  m_glyphInfoList: []\r\n  m_KerningTable:\r\n    kerningPairs: []\r\n  fallbackFontAssets: []\r\n  atlas: {fileID: 0}\r\n--- !u!28 &28981121099961358\r\nTexture2D:\r\n  m_ObjectHideFlags: 0\r\n  m_CorrespondingSourceObject: {fileID: 0}\r\n  m_PrefabInstance: {fileID: 0}\r\n  m_PrefabAsset: {fileID: 0}\r\n  m_Name: Electronic Highway Sign SDF Atlas\r\n  m_ImageContentsHash:\r\n    serializedVersion: 2\r\n    Hash: 00000000000000000000000000000000\r\n  m_IsAlphaChannelOptional: 0\r\n  serializedVersion: 4\r\n  m_Width: 1\r\n  m_Height: 1\r\n  m_CompleteImageSize: 1\r\n  m_MipsStripped: 0\r\n  m_TextureFormat: 1\r\n  m_MipCount: 1\r\n  m_IsReadable: 1\r\n  m_IsPreProcessed: 0\r\n  m_IgnoreMipmapLimit: 0\r\n  m_MipmapLimitGroupName: \r\n  m_StreamingMipmaps: 0\r\n  m_StreamingMipmapsPriority: 0\r\n  m_VTOnly: 0\r\n  m_AlphaIsTransparency: 0\r\n  m_ImageCount: 1\r\n  m_TextureDimension: 2\r\n  m_TextureSettings:\r\n    serializedVersion: 2\r\n    m_FilterMode: 1\r\n    m_Aniso: 1\r\n    m_MipBias: 0\r\n    m_WrapU: 0\r\n    m_WrapV: 0\r\n    m_WrapW: 0\r\n  m_LightmapFormat: 0\r\n  m_ColorSpace: 0\r\n  m_PlatformBlob: \r\n  image data: 1\r\n  _typelessdata: 00\r\n  m_StreamData:\r\n    serializedVersion: 2\r\n    offset: 0\r\n    size: 0\r\n    path: \r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Electronic Highway Sign SDF.asset b/Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Electronic Highway Sign SDF.asset
+--- a/Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Electronic Highway Sign SDF.asset	(revision f8ea56fb57975ecdbc11cd4c9ada373e19d83a82)
++++ b/Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Electronic Highway Sign SDF.asset	(date 1778483990069)
+@@ -169,141 +169,8 @@
+   m_SourceFontFilePath: 
+   m_AtlasPopulationMode: 1
+   InternalDynamicOS: 0
+-  m_GlyphTable:
+-  - m_Index: 66
+-    m_Metrics:
+-      m_Width: 76.53125
+-      m_Height: 14.078125
+-      m_HorizontalBearingX: 7.40625
+-      m_HorizontalBearingY: 21.59375
+-      m_HorizontalAdvance: 88.15625
+-    m_GlyphRect:
+-      m_X: 11
+-      m_Y: 11
+-      m_Width: 77
+-      m_Height: 15
+-    m_Scale: 1
+-    m_AtlasIndex: 0
+-    m_ClassDefinitionType: 0
+-  - m_Index: 42
+-    m_Metrics:
+-      m_Width: 76.53125
+-      m_Height: 107.6875
+-      m_HorizontalBearingX: 7.40625
+-      m_HorizontalBearingY: 115.203125
+-      m_HorizontalAdvance: 88.15625
+-    m_GlyphRect:
+-      m_X: 109
+-      m_Y: 11
+-      m_Width: 77
+-      m_Height: 109
+-    m_Scale: 1
+-    m_AtlasIndex: 0
+-    m_ClassDefinitionType: 0
+-  - m_Index: 68
+-    m_Metrics:
+-      m_Width: 76.53125
+-      m_Height: 107.6875
+-      m_HorizontalBearingX: 7.40625
+-      m_HorizontalBearingY: 115.203125
+-      m_HorizontalAdvance: 88.15625
+-    m_GlyphRect:
+-      m_X: 11
+-      m_Y: 47
+-      m_Width: 77
+-      m_Height: 109
+-    m_Scale: 1
+-    m_AtlasIndex: 0
+-    m_ClassDefinitionType: 0
+-  - m_Index: 80
+-    m_Metrics:
+-      m_Width: 76.53125
+-      m_Height: 107.6875
+-      m_HorizontalBearingX: 7.40625
+-      m_HorizontalBearingY: 115.203125
+-      m_HorizontalAdvance: 88.15625
+-    m_GlyphRect:
+-      m_X: 11
+-      m_Y: 177
+-      m_Width: 77
+-      m_Height: 109
+-    m_Scale: 1
+-    m_AtlasIndex: 0
+-    m_ClassDefinitionType: 0
+-  - m_Index: 72
+-    m_Metrics:
+-      m_Width: 76.53125
+-      m_Height: 107.6875
+-      m_HorizontalBearingX: 7.40625
+-      m_HorizontalBearingY: 115.203125
+-      m_HorizontalAdvance: 88.15625
+-    m_GlyphRect:
+-      m_X: 11
+-      m_Y: 307
+-      m_Width: 77
+-      m_Height: 109
+-    m_Scale: 1
+-    m_AtlasIndex: 0
+-    m_ClassDefinitionType: 0
+-  - m_Index: 3
+-    m_Metrics:
+-      m_Width: 0
+-      m_Height: 0
+-      m_HorizontalBearingX: 0
+-      m_HorizontalBearingY: 0
+-      m_HorizontalAdvance: 88.15625
+-    m_GlyphRect:
+-      m_X: 0
+-      m_Y: 0
+-      m_Width: 0
+-      m_Height: 0
+-    m_Scale: 1
+-    m_AtlasIndex: 0
+-    m_ClassDefinitionType: 0
+-  - m_Index: 49
+-    m_Metrics:
+-      m_Width: 76.53125
+-      m_Height: 107.6875
+-      m_HorizontalBearingX: 7.40625
+-      m_HorizontalBearingY: 115.203125
+-      m_HorizontalAdvance: 88.15625
+-    m_GlyphRect:
+-      m_X: 11
+-      m_Y: 437
+-      m_Width: 77
+-      m_Height: 109
+-    m_Scale: 1
+-    m_AtlasIndex: 0
+-    m_ClassDefinitionType: 0
+-  m_CharacterTable:
+-  - m_ElementType: 1
+-    m_Unicode: 95
+-    m_GlyphIndex: 66
+-    m_Scale: 1
+-  - m_ElementType: 1
+-    m_Unicode: 71
+-    m_GlyphIndex: 42
+-    m_Scale: 1
+-  - m_ElementType: 1
+-    m_Unicode: 97
+-    m_GlyphIndex: 68
+-    m_Scale: 1
+-  - m_ElementType: 1
+-    m_Unicode: 109
+-    m_GlyphIndex: 80
+-    m_Scale: 1
+-  - m_ElementType: 1
+-    m_Unicode: 101
+-    m_GlyphIndex: 72
+-    m_Scale: 1
+-  - m_ElementType: 1
+-    m_Unicode: 32
+-    m_GlyphIndex: 3
+-    m_Scale: 1
+-  - m_ElementType: 1
+-    m_Unicode: 78
+-    m_GlyphIndex: 49
+-    m_Scale: 1
++  m_GlyphTable: []
++  m_CharacterTable: []
+   m_AtlasTextures:
+   - {fileID: 28981121099961358}
+   m_AtlasTextureIndex: 0
+@@ -314,40 +181,16 @@
+   m_AtlasHeight: 1024
+   m_AtlasPadding: 10
+   m_AtlasRenderMode: 4165
+-  m_UsedGlyphRects:
+-  - m_X: 0
+-    m_Y: 0
+-    m_Width: 98
+-    m_Height: 36
+-  - m_X: 98
+-    m_Y: 0
+-    m_Width: 98
+-    m_Height: 130
+-  - m_X: 0
+-    m_Y: 36
+-    m_Width: 98
+-    m_Height: 130
+-  - m_X: 0
+-    m_Y: 166
+-    m_Width: 98
+-    m_Height: 130
+-  - m_X: 0
+-    m_Y: 296
+-    m_Width: 98
+-    m_Height: 130
+-  - m_X: 0
+-    m_Y: 426
+-    m_Width: 98
+-    m_Height: 130
++  m_UsedGlyphRects: []
+   m_FreeGlyphRects:
+   - m_X: 196
+     m_Y: 0
+     m_Width: 827
+     m_Height: 1023
+-  - m_X: 98
+-    m_Y: 130
+-    m_Width: 925
+-    m_Height: 893
++  - m_X: 0
++    m_Y: 0
++    m_Width: 1023
++    m_Height: 1023
+   - m_X: 0
+     m_Y: 556
+     m_Width: 1023
