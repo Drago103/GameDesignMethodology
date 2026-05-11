@@ -341,8 +341,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 424005962}
         m_TargetAssemblyTypeName: LevelStartInstructions, Assembly-CSharp
-        m_MethodName: set_tag
-        m_Mode: 5
+        m_MethodName: StartLevel
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
