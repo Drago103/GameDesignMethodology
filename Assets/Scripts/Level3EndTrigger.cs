@@ -12,7 +12,7 @@ public class Level3EndTrigger : MonoBehaviour
     public string nextLevelSceneName = "Level 4";
     public string mainMenuSceneName = "MainMenu";
 
-    [Header("Player Control")]
+    [Header("Player Scripts To Disable")]
     public MonoBehaviour[] scriptsToDisable;
 
     private bool levelCompleted = false;
@@ -21,6 +21,9 @@ public class Level3EndTrigger : MonoBehaviour
     {
         if (levelCompletePanel != null)
             levelCompletePanel.SetActive(false);
+
+        if (levelCompleteText != null)
+            levelCompleteText.text = "LEVEL COMPLETED";
     }
 
     void OnTriggerEnter(Collider other)
@@ -29,16 +32,19 @@ public class Level3EndTrigger : MonoBehaviour
 
         if (other.CompareTag("Player"))
         {
-            CompleteLevel();
+            CompleteLevel(other.gameObject);
         }
     }
 
-    void CompleteLevel()
+    void CompleteLevel(GameObject player)
     {
         levelCompleted = true;
 
         if (levelCompletePanel != null)
             levelCompletePanel.SetActive(true);
+
+        if (levelCompleteText != null)
+            levelCompleteText.text = "LEVEL COMPLETED";
 
         foreach (MonoBehaviour script in scriptsToDisable)
         {
@@ -46,13 +52,23 @@ public class Level3EndTrigger : MonoBehaviour
                 script.enabled = false;
         }
 
+        Rigidbody rb = player.GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
         Time.timeScale = 0f;
+
+        Debug.Log("[LEVEL COMPLETE] Player reached the level complete prefab.");
     }
 
-    public void OpenLevel4()
+    public void GoToNextLevel()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(nextLevelSceneName);

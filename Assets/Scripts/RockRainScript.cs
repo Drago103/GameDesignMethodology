@@ -49,15 +49,35 @@ public class RockRainSpawner : MonoBehaviour
                 null
             );
 
-            // Add RockHazard script automatically if missing
+            // Make this raining rock cause Game Over on player collision
             if (rock.GetComponent<RockHazard>() == null)
             {
                 rock.AddComponent<RockHazard>();
             }
 
-            Rigidbody rb = rock.GetComponent<Rigidbody>();
+            // Make sure the rock has a collider
+            Collider col = rock.GetComponent<Collider>();
+            if (col == null)
+            {
+                col = rock.GetComponentInChildren<Collider>();
+            }
 
-            if (rb != null && extraDownwardForce > 0f)
+            if (col == null)
+            {
+                Debug.LogWarning("[RockRainSpawner] Spawned rock has no Collider. It cannot trigger Game Over.");
+            }
+
+            // Make sure the rock has a Rigidbody so it can fall
+            Rigidbody rb = rock.GetComponent<Rigidbody>();
+            if (rb == null)
+            {
+                rb = rock.AddComponent<Rigidbody>();
+            }
+
+            rb.useGravity = true;
+            rb.isKinematic = false;
+
+            if (extraDownwardForce > 0f)
             {
                 rb.AddForce(Vector3.down * extraDownwardForce, ForceMode.Impulse);
             }
