@@ -22,12 +22,20 @@ public class Movement : MonoBehaviour
     [SerializeField] Transform headTarget;
 
     [SerializeField] float MoveSpeed;
+
+    [SerializeField] bool CanDash;
+
+    [SerializeField] bool CanSlide;
+
+    [SerializeField] bool CanWallJump;
     public float moveSpeed
     {
         get => MoveSpeed;
         set => MoveSpeed = value;
     }
     public bool movementLocked = false;
+
+    private bool CanJump = true;
 
     [SerializeField] float mouseSensitivity = 150f;
 
@@ -161,10 +169,14 @@ public class Movement : MonoBehaviour
 
     void Jumping()
     {
-        if (isGrounded && controls.Player.Jump.triggered)
+        if (wallRebound.onwall || wallRebound.Walljumping)
+        return;
+
+        if (isGrounded && CanJump && controls.Player.Jump.triggered)
         {
             Debug.Log("[JUMP] Jump triggered");
             rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+            StartCoroutine(unlockJump());
         }
     }
 
@@ -185,12 +197,24 @@ public class Movement : MonoBehaviour
             wallNormal = other.GetContact(0).normal;
             rb.AddForce( wallNormal* 2f, ForceMode.Impulse);
         }
+
+        if (other.collider.CompareTag("Ground"))
+        {
+            
+            CanJump = true;
+        }
     }
 
     void OnCollisionExit(Collision other)
     {
         Debug.Log("[COLLISION EXIT] Left: " + other.collider.tag);
 
+
+        // if (other.collider.CompareTag("Ground"))
+        // {
+            
+        //     CanJump = false;
+        // }
     }
 
     void OnTriggerEnter(Collider other)
@@ -235,7 +259,7 @@ public class Movement : MonoBehaviour
         }
     }
 
-    void GroundCheck()
+   void GroundCheck()
     {
         Vector3 origin = transform.position + Vector3.up * 0.1f;
 
@@ -244,7 +268,6 @@ public class Movement : MonoBehaviour
         {
             isGrounded = true;
             lastGroundedTime = Time.time;
-
             groundNormal = hit.normal;
         }
         else
@@ -259,21 +282,38 @@ public class Movement : MonoBehaviour
         cameraLocked = false;
     }
 
+    IEnumerator unlockJump()
+    {
+        CanJump = false;                    
+        yield return new WaitForSeconds(0.2f);                    
+    }
+
     void Update()
     {
         if (IsPaused) return;
         
         GroundCheck();
-        dash.CheckDashInput(controls);
+        if (CanDash)
+        {
+            dash.CheckDashInput(controls);
+        }
         MovePlayer();
-        if (!wallRebound.isRotating && !slide.IsSliding)
+
+        if (!wallRebound.isRotating && !slide.IsSliding && !wallRebound.onwall)
             RotatePlayer();
 
         Jumping();
         ResetCam();
-        wallRebound.handleWallJump(controls);
-        slide.Slide(controls);
 
-        
+        if (CanWallJump)
+        {
+            wallRebound.handleWallJump(controls);
+        }
+
+        if (CanSlide)
+        {
+            slide.Slide(controls);
+        }
+    
     }
 }
