@@ -41,6 +41,7 @@ public class RockRainSpawner : MonoBehaviour
             Vector3 spawnPos = GetRandomPointInArea();
 
             GameObject prefab = rockPrefabs[Random.Range(0, rockPrefabs.Length)];
+
             GameObject rock = Instantiate(
                 prefab,
                 spawnPos,
@@ -48,7 +49,14 @@ public class RockRainSpawner : MonoBehaviour
                 null
             );
 
+            // Add RockHazard script automatically if missing
+            if (rock.GetComponent<RockHazard>() == null)
+            {
+                rock.AddComponent<RockHazard>();
+            }
+
             Rigidbody rb = rock.GetComponent<Rigidbody>();
+
             if (rb != null && extraDownwardForce > 0f)
             {
                 rb.AddForce(Vector3.down * extraDownwardForce, ForceMode.Impulse);
