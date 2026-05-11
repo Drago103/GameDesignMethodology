@@ -17,8 +17,12 @@ Material:
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
+<<<<<<< HEAD
   stringTagMap:
     RenderType: Opaque
+=======
+  stringTagMap: {}
+>>>>>>> Level3
   disabledShaderPasses:
   - MOTIONVECTORS
   m_LockedProperties: 
@@ -119,10 +123,17 @@ Material:
     - _BaseColor: {r: 0.8, g: 0.8, b: 0.8, a: 1}
     - _Color: {r: 0.8, g: 0.8, b: 0.8, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+<<<<<<< HEAD
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &732110429959114307
+=======
+    - _SpecColor: {r: 0.48452914, g: 0.48452914, b: 0.48452914, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!114 &7532185052035219345
+>>>>>>> Level3
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
