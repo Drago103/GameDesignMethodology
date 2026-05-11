@@ -71,7 +71,7 @@ public class HandcraftedDesertMapGenerator : MonoBehaviour
         GenerateTrees();
         GenerateRocks();
         GenerateDecorations();
-        GenerateLevelEnd();
+        //GenerateLevelEnd();
 
         // Initial spawn attempt.
         PositionPlayer();

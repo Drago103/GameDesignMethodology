@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 51b74d7bad397457d883c5940f7664d8, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -595,7 +595,7 @@ GameObject:
   - component: {fileID: 184515892}
   m_Layer: 3
   m_Name: Cube (12)
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2166,7 +2166,7 @@ GameObject:
   - component: {fileID: 518572388}
   m_Layer: 3
   m_Name: Cube (14)
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3731,7 +3731,7 @@ GameObject:
   - component: {fileID: 813632291}
   m_Layer: 3
   m_Name: Cube (13)
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6502,7 +6502,7 @@ GameObject:
   - component: {fileID: 1594694352}
   m_Layer: 3
   m_Name: Cube (16)
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6816,6 +6816,9 @@ MonoBehaviour:
   wallRebound: {fileID: 1603020804}
   headTarget: {fileID: 1675731280}
   MoveSpeed: 12
+  CanDash: 0
+  CanSlide: 0
+  CanWallJump: 0
   movementLocked: 0
   mouseSensitivity: 150
   JumpForce: 8
@@ -7248,7 +7251,7 @@ GameObject:
   - component: {fileID: 1696983419}
   m_Layer: 3
   m_Name: Cube (15)
-  m_TagString: Ground
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
