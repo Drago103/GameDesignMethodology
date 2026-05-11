@@ -44,8 +44,8 @@ public class WallRebound : MonoBehaviour
 
         rb.linearVelocity = Vector3.zero;
 
-        rb.AddForce(movement.WallNormal.normalized * movement.jumpforce * 1.5f, ForceMode.Impulse);
-        rb.AddForce(Vector3.up * movement.jumpforce* 1.5f, ForceMode.Impulse);
+        rb.AddForce(movement.WallNormal.normalized * movement.jumpforce, ForceMode.Impulse);
+        rb.AddForce(Vector3.up * movement.jumpforce, ForceMode.Impulse);
     }
 
     public void handleWallJump(PlayerControls controls)
