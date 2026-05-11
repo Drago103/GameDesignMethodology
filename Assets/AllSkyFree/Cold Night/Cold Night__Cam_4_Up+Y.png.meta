@@ -1,4 +1,5 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream
 <<<<<<<< HEAD:Assets/AllSkyFree/Cold Night/Cold Night__Cam_4_Up+Y.png.meta
 guid: 3d6928c404a7c46c3991bb1b73521d66
 ========
@@ -12,6 +13,13 @@ TextureImporter:
 ========
   serializedVersion: 13
 >>>>>>>> parent of 7ee813d (Revert "Merge branch 'Level1' into PolishLevel1"):Assets/Images/Portal.png.meta
+=======
+guid: 3d6928c404a7c46c3991bb1b73521d66
+TextureImporter:
+  fileIDToRecycleName: {}
+  externalObjects: {}
+  serializedVersion: 9
+>>>>>>> Stashed changes
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -28,12 +36,18 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+<<<<<<< Updated upstream
     flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
   ignoreMipmapLimit: 0
+=======
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+>>>>>>> Stashed changes
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -42,7 +56,10 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
+<<<<<<< Updated upstream
 <<<<<<<< HEAD:Assets/AllSkyFree/Cold Night/Cold Night__Cam_4_Up+Y.png.meta
+=======
+>>>>>>> Stashed changes
     filterMode: -1
     aniso: -1
     mipBias: -100
@@ -50,6 +67,7 @@ TextureImporter:
     wrapV: 1
     wrapW: 1
   nPOTScale: 1
+<<<<<<< Updated upstream
 ========
     filterMode: 1
     aniso: 1
@@ -62,6 +80,11 @@ TextureImporter:
   lightmap: 0
   compressionQuality: 50
   spriteMode: 1
+=======
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 0
+>>>>>>> Stashed changes
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -70,6 +93,7 @@ TextureImporter:
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
+<<<<<<< Updated upstream
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
 <<<<<<<< HEAD:Assets/AllSkyFree/Cold Night/Cold Night__Cam_4_Up+Y.png.meta
@@ -94,19 +118,36 @@ TextureImporter:
 ========
   - serializedVersion: 4
 >>>>>>>> parent of 7ee813d (Revert "Merge branch 'Level1' into PolishLevel1"):Assets/Images/Portal.png.meta
+=======
+  alphaIsTransparency: 0
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - serializedVersion: 2
+>>>>>>> Stashed changes
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
+<<<<<<< Updated upstream
 <<<<<<<< HEAD:Assets/AllSkyFree/Cold Night/Cold Night__Cam_4_Up+Y.png.meta
     textureCompression: 2
 ========
     textureCompression: 0
 >>>>>>>> parent of 7ee813d (Revert "Merge branch 'Level1' into PolishLevel1"):Assets/Images/Portal.png.meta
+=======
+    textureCompression: 2
+>>>>>>> Stashed changes
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+<<<<<<< Updated upstream
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
 <<<<<<<< HEAD:Assets/AllSkyFree/Cold Night/Cold Night__Cam_4_Up+Y.png.meta
@@ -115,6 +156,10 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
 >>>>>>>> parent of 7ee813d (Revert "Merge branch 'Level1' into PolishLevel1"):Assets/Images/Portal.png.meta
+=======
+    androidETC2FallbackOverride: 0
+  - serializedVersion: 2
+>>>>>>> Stashed changes
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -124,12 +169,16 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+<<<<<<< Updated upstream
     ignorePlatformSupport: 0
+=======
+>>>>>>> Stashed changes
     androidETC2FallbackOverride: 0
   spriteSheet:
     serializedVersion: 2
     sprites: []
     outline: []
+<<<<<<< Updated upstream
     customData: 
     physicsShape: []
     bones: []
@@ -139,10 +188,16 @@ TextureImporter:
     spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
 >>>>>>>> parent of 7ee813d (Revert "Merge branch 'Level1' into PolishLevel1"):Assets/Images/Portal.png.meta
+=======
+    physicsShape: []
+    bones: []
+    spriteID: 
+>>>>>>> Stashed changes
     vertices: []
     indices: 
     edges: []
     weights: []
+<<<<<<< Updated upstream
 <<<<<<<< HEAD:Assets/AllSkyFree/Cold Night/Cold Night__Cam_4_Up+Y.png.meta
   spritePackingTag: 
 ========
@@ -153,6 +208,11 @@ TextureImporter:
   mipmapLimitGroupName: 
 >>>>>>>> parent of 7ee813d (Revert "Merge branch 'Level1' into PolishLevel1"):Assets/Images/Portal.png.meta
   pSDRemoveMatte: 0
+=======
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+>>>>>>> Stashed changes
   userData: 
   assetBundleName: 
   assetBundleVariant: 
