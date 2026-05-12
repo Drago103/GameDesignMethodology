@@ -18,18 +18,20 @@ public class SpeedPad : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Speedpad touched");
         if (!other.CompareTag("Player")) return;
 
         Rigidbody rb = other.attachedRigidbody;
         if (rb == null) return;
 
-        PlayerMovement pm = other.GetComponent<PlayerMovement>();
+        Movement pm = other.GetComponent<Movement>();
         if (pm == null) return;
 
         StartCoroutine(SpeedBoost(rb, pm));
+        Debug.Log("Speedpad start");
     }
 
-    private IEnumerator SpeedBoost(Rigidbody rb, PlayerMovement pm)
+    private IEnumerator SpeedBoost(Rigidbody rb, Movement pm)
     {
         pm.movementLocked = true;
 
@@ -90,7 +92,7 @@ public class SpeedPad : MonoBehaviour
         boostCamera.fieldOfView = originalFOV;
     }
 
-    private IEnumerator RestoreSpeed(PlayerMovement pm, float originalSpeed)
+    private IEnumerator RestoreSpeed(Movement pm, float originalSpeed)
     {
         float t = 0f;
         float boostedSpeed = pm.moveSpeed;
