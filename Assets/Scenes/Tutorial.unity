@@ -461,8 +461,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8307792188425881187, guid: 65e45fdccc138da40af94aac01aa5203, type: 3}
       propertyPath: m_text
-      value: Congratulations on clearing the tutorial just two more things that will
-        be vital for you for the rest of the game
+      value: Congratulations on clearing the tutorial just one more thing that will
+        need to learn about the game
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2406,11 +2406,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7588239648235649919, guid: f916fc92e49034c4eb7951dea264195c, type: 3}
       propertyPath: m_text
-      value: this is the slowdown ability, you can activate it by using Q. This slowsdown
-        the entire game including you giving you more time to position yourself and
-        save you in a tight spot. However this ability can also be used to give you
-        time to choose a path to take in a level. Be warned the ability has a five
-        second cooldown so use it wisely.
+      value: this is the slowdown ability, you can activate it by using Q. This slows
+        down the entire game including you giving you more time to position yourself
+        and save you in a tight spot. However this ability can also be used to give
+        you time to choose a path to take in a level. Be warned the ability has a
+        five second cooldown so use it wisely.
       objectReference: {fileID: 0}
     - target: {fileID: 7616615194171912788, guid: f916fc92e49034c4eb7951dea264195c, type: 3}
       propertyPath: m_Name
@@ -2537,7 +2537,8 @@ PrefabInstance:
       propertyPath: m_text
       value: Follow the path to try out the movement and reach this yellow checkpoint.
         If you reach a forkroad along the way, don't worry about which path to pick,
-        they will both end up at the same place.
+        they will both end up at the same place. If you see this zone in the game
+        they will serve as the goal instead of a checkpoint.
       objectReference: {fileID: 0}
     - target: {fileID: 7616615194171912788, guid: f916fc92e49034c4eb7951dea264195c, type: 3}
       propertyPath: m_Name
@@ -3578,6 +3579,7 @@ PrefabInstance:
     - target: {fileID: 8307792188425881187, guid: 65e45fdccc138da40af94aac01aa5203, type: 3}
       propertyPath: m_text
       value: In order to rotate the camera you can move your mouse or the trackpad.
+        The camera only rotates left and right, not up and down.
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4940,12 +4942,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8307792188425881187, guid: 65e45fdccc138da40af94aac01aa5203, type: 3}
       propertyPath: m_text
-      value: Welcome to Dark Breakout. You are prisoner who's been planning their
-        escape for months, and now a power outage has struck the facility you are
-        locked in. This is your one and only chance to escape. In order to escape
-        you will need to traverse the obstacles in the prison designed to stopped
-        prisoners from escaping and then traverse the canyon to a jeep that an accomplice
-        of yours has waiting for your escape.
+      value: Welcome to Dark Breakout. In this tutorial you will learn how to move,
+        rotate the camera, jump, slow down time and pause the game
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7778,13 +7776,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4000750684805945186, guid: 65e45fdccc138da40af94aac01aa5203, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8307792188425881187, guid: 65e45fdccc138da40af94aac01aa5203, type: 3}
       propertyPath: m_text
-      value: In each level you will be chased by a light source, it is game over
-        if the light catches you causing it to be game over. Another thing you can
-        do is open up the pause menu by hitting the ESC key.
+      value: To open up the pause menu in the game, use the ESC key.
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
