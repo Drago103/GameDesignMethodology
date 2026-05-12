@@ -8,15 +8,40 @@ public class Fade : MonoBehaviour
 
     private float targetAlpha = 0f;
 
-    void Update()
+    private void Awake()
     {
-        if (fadeImage == null) return;
+        if (fadeImage == null)
+            fadeImage = GetComponent<Image>();
 
+        // Force alpha to 0 at start
         Color c = fadeImage.color;
-        c.a = Mathf.MoveTowards(c.a, targetAlpha, speed * Time.deltaTime);
+        c.a = 0f;
         fadeImage.color = c;
+
+        Debug.Log("FADE: Starting alpha = " + fadeImage.color.a);
     }
 
-    public void FadeOut() => targetAlpha = 1f;
-    public void FadeIn() => targetAlpha = 0f;
+    void Update()
+    {
+        Color c = fadeImage.color;
+        float oldA = c.a;
+
+        c.a = Mathf.MoveTowards(c.a, targetAlpha, speed * Time.deltaTime);
+        fadeImage.color = c;
+
+        if (Mathf.Abs(oldA - c.a) > 0.001f)
+            Debug.Log("FADE: Alpha = " + c.a);
+    }
+
+    public void FadeOut()
+    {
+        Debug.Log("FADE: FadeOut() called");
+        targetAlpha = 1f;
+    }
+
+    public void FadeIn()
+    {
+        Debug.Log("FADE: FadeIn() called");
+        targetAlpha = 0f;
+    }
 }
