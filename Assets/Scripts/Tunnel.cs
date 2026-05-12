@@ -38,7 +38,7 @@ public class Tunnel : MonoBehaviour
         // Face negative Z
         player.transform.rotation = Quaternion.LookRotation(Vector3.back);
 
-        // Stay frozen for a moment
+        // Stay frozen briefly
         yield return new WaitForSeconds(freezeTime);
 
         // Fade in
