@@ -35,7 +35,7 @@ public class Tunnel : MonoBehaviour
         // Teleport
         player.transform.position = destination.position;
 
-        // Face negative Z
+        // Rotate to face negative Z
         player.transform.rotation = Quaternion.LookRotation(Vector3.back);
 
         // Stay frozen briefly
