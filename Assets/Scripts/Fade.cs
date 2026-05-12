@@ -10,6 +10,8 @@ public class Fade : MonoBehaviour
 
     void Update()
     {
+        if (fadeImage == null) return;
+
         Color c = fadeImage.color;
         c.a = Mathf.MoveTowards(c.a, targetAlpha, speed * Time.deltaTime);
         fadeImage.color = c;
